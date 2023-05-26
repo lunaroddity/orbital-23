@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { View } from 'react-native';
 import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
+import { HeaderBar } from './_layout';
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
@@ -35,6 +36,7 @@ export default function RegisterPage() {
 
     return (
         <View style = {{ flex: 1, justifyContent: 'center'}}>
+            <HeaderBar />
             <Text>Email</Text>
             <TextInput
                 autoCapitalize='none'
