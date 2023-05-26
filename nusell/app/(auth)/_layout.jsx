@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { Image } from "react-native";
 
-// Creates a header bar with the NUSell logo.
 function LogoTitle() {
     return (
         <Image 
@@ -11,6 +10,7 @@ function LogoTitle() {
     );
 }
 
+// Header bar component with the NUSell logo.
 export function HeaderBar() {
     return (
         <Stack.Screen
