@@ -14,18 +14,20 @@ export default function NewPostPage() {
     const { user } = useAuth();
     const router = useRouter();
 
+    // Handles an addition of an image to a post.
     const handleAddImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images
         })
 
         if (!result.canceled) {
-            // accesses only the first image and gets its URI
+            // setImage accesses only the first image and gets its URI.
             setImage(result.assets[0].uri);
         }
         console.log(`result: ${JSON.stringify(result)}`);
     }
 
+    // Handles the submission of the contents in a post.
     const handleSubmit = async () => {
         if (caption === '') {
             setErrMsg('Caption cannot be empty.');
@@ -34,32 +36,38 @@ export default function NewPostPage() {
 
         let imageUrl = null;
         if (image != null) {
-            const { data, error } = await supabase.storage.from('images').upload(`${new Date().getTime()}`, // replace with uuid in future
+            // To be replaced with UUID in future to prevent clashes in naming.
+            const { data, error } = await supabase.storage.from('images').upload(`${new Date().getTime()}`, 
                 {
                     uri: image,
                     type: 'jpg',
                     name: 'name'
                 });
 
+            // If image cannot be uploaded, stop loading icon and show error message
             if (error) {
                 setLoading(false);
                 setErrMsg(error.message);
                 return;
             }
+            // Pulls image URL from supabase.
             const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(data.path);
             imageUrl = publicUrl;   
         }
 
         setLoading(true);
+        // Uploads contents of new post to supabase and retrieves the post as a single object.
         const { error } = await supabase.from('posts')
             .insert({ caption: caption, user_id: user.id, image_url: imageUrl })
             .select()
             .single();
-        // select gets back the data submitted, single gets the item back
+
         setLoading(false);
         if (error != null) {
             setErrMsg(error.message);
         }
+
+        // Returns the user to the root page.
         router.push("/");
     }
 

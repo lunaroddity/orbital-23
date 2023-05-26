@@ -11,7 +11,7 @@ export default function LoginPage() {
     const [loading , setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
     
-    // handles submission of user email and password
+    // Handles submission of user's email and password to supabase.
     const handleSubmit = async () => {
         setErrMsg('');
         if (email === '') {
@@ -24,9 +24,9 @@ export default function LoginPage() {
             return;
         }
 
-        setLoading(true); // renders a spinning loading icon
-        const { error } = supabase.auth.signInWithPassword({ email, password });
-        setLoading(false);
+        setLoading(true); // Renders a spinning loading icon.
+        const { error } = supabase.auth.signInWithPassword({ email, password }); 
+        setLoading(false); // Stops rendering loading icon.
         if (error) {
             setErrMsg(error.message);
             return;

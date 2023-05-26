@@ -3,7 +3,7 @@ import { AuthProvider } from "../contexts/auth";
 
 export default function RootLayout() {
     return (
-        <AuthProvider>
+        <AuthProvider> {/* Only those logged in are permitted to view the contents of the app. */}
             <Slot />
         </AuthProvider>
     )

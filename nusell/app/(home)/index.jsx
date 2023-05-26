@@ -6,16 +6,19 @@ import { supabase } from '../../lib/supabase';
 export default function HomePage() {
     const [posts, setPosts] = useState([]);
     const [refresh, setRefresh] = useState(false);
+
     async function fetchPosts() {
         let { data } = await supabase.from('posts').select('*');
         setPosts(data);
         setRefresh(false);
-    }  
+    }
     
+    // Initial post fetch upon loading.
     useEffect(() => {  
         fetchPosts();
     }, []);
 
+    // Fetches posts again when user pulls to refresh.
     useEffect(() => {
         if (refresh) {
             fetchPosts();
@@ -34,6 +37,7 @@ export default function HomePage() {
     );
 }
 
+// Function to render posts in the home feed.
 function PostItem({ post }) {
     return (
         <View>

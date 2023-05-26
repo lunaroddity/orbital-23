@@ -25,9 +25,9 @@ export default function RegisterPage() {
             setErrMsg('Please use your NUS email.');
         }
 
-        setLoading(true);
+        setLoading(true); // Renders a spinning loading icon.
         const { error } = supabase.auth.signUp({ email, password });
-        setLoading(false);
+        setLoading(false); // Stops rendering loading icon.
         if (error) {
             setErrMsg(error.message);
             return;
@@ -53,7 +53,9 @@ export default function RegisterPage() {
                 onChangeText={setPassword} />
 
             <Button onPress={handleSubmit}>Register</Button>
+            { /* Renders error message if any. */}
             {errMsg !== "" && <Text>{errMsg}</Text>}
+            { /* Renders loading icon while data is uploading. */}
             {loading && <ActivityIndicator />}
         </View>
     )
