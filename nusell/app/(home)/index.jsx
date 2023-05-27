@@ -13,12 +13,10 @@ export default function HomePage() {
         setRefresh(false);
     }
     
-    // Initial post fetch upon loading.
     useEffect(() => {  
         fetchPosts();
     }, []);
 
-    // Fetches posts again when user pulls to refresh.
     useEffect(() => {
         if (refresh) {
             fetchPosts();
@@ -33,11 +31,10 @@ export default function HomePage() {
             refreshing={refresh}
             onRefresh={() => setRefresh(true)}
             />
-    </View> 
+    </View>
     );
 }
 
-// Function to render posts in the home feed.
 function PostItem({ post }) {
     return (
         <View>

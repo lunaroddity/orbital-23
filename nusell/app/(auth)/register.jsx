@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
@@ -14,15 +14,21 @@ export default function RegisterPage() {
         if (email === '') {
             setErrMsg('Email cannot be empty.');
             return;
-        } 
+        }
 
         if (password === '') {
             setErrMsg('Password cannot be empty.');
             return;
         }
 
+        if (!email.includes('@')) {
+            setErrMsg('Please use a valid email.');
+            return;
+        }
+
         if (!email.includes('u.nus.edu')) {
             setErrMsg('Please use your NUS email.');
+            return;
         }
 
         setLoading(true); // Renders a spinning loading icon.
@@ -35,28 +41,64 @@ export default function RegisterPage() {
     }
 
     return (
-        <View style = {{ flex: 1, justifyContent: 'center'}}>
+        <View style = {styles.view}>
             <HeaderBar />
-            <Text>Email</Text>
+
+            {/* Email input */}
             <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Email'
+                activeOutlineColor='#003D7C'
                 autoCapitalize='none'
                 textContentType='emailAddress'
                 value={email}
                 onChangeText={setEmail} />
 
-            <Text>Password</Text>
-            <TextInput 
+            {/* Password input */}
+            <TextInput
+                style={styles.passwordInput}
+                mode='outlined'
+                label='Password'
+                activeOutlineColor='#003D7C'
                 secureTextEntry
                 autoCapitalize='none'
                 textContentType='password'
                 value={password}
                 onChangeText={setPassword} />
 
-            <Button onPress={handleSubmit}>Register</Button>
-            { /* Renders error message if any. */}
-            {errMsg !== "" && <Text>{errMsg}</Text>}
+            {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
+
+            <Button 
+                mode="contained"
+                buttonColor ="#003D7C"
+                rippleColor="#022E5B"
+                onPress={handleSubmit}>Register</Button>
+            
             { /* Renders loading icon while data is uploading. */}
             {loading && <ActivityIndicator />}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    view: {
+        flex: 1,
+        justifyContent: 'center',
+        marginHorizontal: 20,
+    },
+    emailInput: {
+        backgroundColor: '#fff',
+        marginBottom: 10
+    },
+    passwordInput: {
+        backgroundColor: '#fff',
+        marginBottom: 20
+    },
+    errMsg: {
+        padding: 10,
+        marginBottom: 15,
+        backgroundColor: '#BF3E3E',
+        color: '#FFFFFF'
+    }
+});

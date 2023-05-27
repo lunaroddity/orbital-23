@@ -15,15 +15,15 @@ export function HeaderBar() {
     return (
         <Stack.Screen
                     options={{
-                        title: "login",
-                        headerStyle: { backgroundColor: "#003D7C" },
+                        headerStyle: { backgroundColor: '#003D7C' },
+                        headerTintColor: '#fff',
                         headerTitle: (props) => <LogoTitle {...props} />,
                         headerTitleAlign: 'center'
                     }} 
-            />
+        />
     );
 }
 
 export default function AuthLayout() {
     return <Stack />;
-} 
+}
