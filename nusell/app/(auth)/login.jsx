@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { View } from "react-native";
-import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet } from "react-native";
+import { Text, Button, ActivityIndicator, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
 import { HeaderBar } from './_layout';
 
@@ -17,7 +17,12 @@ export default function LoginPage() {
         if (email === '') {
             setErrMsg('Email cannot be empty.');
             return;
-        } 
+        }
+
+        if (!email.includes('@')) {
+            setErrMsg('Please use a valid email.');
+            return;
+        }
 
         if (password === '') {
             setErrMsg('Password cannot be empty.');
@@ -34,30 +39,71 @@ export default function LoginPage() {
     }
 
     return (
-        <View style = {{ flex: 1, justifyContent: 'center' }}>
+        <View style = {styles.view}>
             <HeaderBar />
-            <Text>Email</Text>
+
+            {/* Email input */}
             <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Email'
+                activeOutlineColor='#003D7C'
                 autoCapitalize='none'
                 textContentType='emailAddress'
                 value={email}
                 onChangeText={setEmail} />
             
-            <Text>Password</Text>
-            <TextInput 
+            {/* Password input */}
+            <TextInput
+                style={styles.passwordInput}
+                mode='outlined'
+                label='Password'
+                activeOutlineColor='#003D7C'
                 secureTextEntry
                 autoCapitalize='none'
                 textContentType='password'
                 value={password}
                 onChangeText={setPassword} />
 
-            <Button mode="contained" buttonColor ="#003D7C" onPress={handleSubmit}>Login</Button>
-            {errMsg !== "" && <Text>{errMsg}</Text>}
+            {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
+
+            <Button 
+                mode="contained"
+                buttonColor ="#003D7C"
+                rippleColor="#022E5B"
+                onPress={handleSubmit}>Login</Button>
+
+            { /* Renders loading icon while data is uploading. */}
             {loading && <ActivityIndicator />}
 
-            <Link href="/register">
-                <Button>{"Don't have an account? Register now!"}</Button>
+            <Link style={styles.registerButton} href="/register">
+                <Button textColor='#003D7C'>{"Don't have an account? Register now!"}</Button>
             </Link>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    view: {
+        flex: 1,
+        justifyContent: 'center',
+        marginHorizontal: 20,
+    },
+    emailInput: {
+        backgroundColor: '#fff',
+        marginBottom: 10
+    },
+    passwordInput: {
+        backgroundColor: '#fff',
+        marginBottom: 20
+    },
+    errMsg: {
+        padding: 10,
+        marginBottom: 15,
+        backgroundColor: '#BF3E3E',
+        color: '#FFFFFF'
+    },
+    registerButton: {
+        margin: 10,
+    }
+});
