@@ -5,6 +5,8 @@ import { useRouter } from "expo-router";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
 import { supabase } from "../../lib/supabase";
 import * as ImagePicker from "expo-image-picker";
+import { HeaderBar } from '../(auth)/_layout.jsx';
+
 
 export default function NewPostPage() {
     const [caption, setCaption] = useState('');
@@ -73,6 +75,7 @@ export default function NewPostPage() {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center'}}>
+            <HeaderBar />
             <Text>Caption</Text>
             <TextInput value={caption} onChangeText={setCaption} />
             {errMsg !== '' && <Text>{errMsg}</Text>}
