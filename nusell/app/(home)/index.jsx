@@ -50,6 +50,8 @@ export default function HomePage() {
                 return post;
               }
               })}
+              numColumns={2}
+              keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <PostItem post={item}/>} 
             refreshing={refresh}
             onRefresh={() => setRefresh(true)}
@@ -118,6 +120,7 @@ function Avatar() {
           height: 175,
         },
         postContainer: {
+          padding: 8,
           backgroundColor: 'white',
           borderWidth: 1,
           borderRadius: 10,
