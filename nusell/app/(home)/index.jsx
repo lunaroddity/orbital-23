@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Image } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
-//import { SearchBar } from 'react-native-screens';
 import { HeaderBar } from '../(auth)/_layout.jsx';
 
 const SearchBar = ({ query, setQuery }) => {
