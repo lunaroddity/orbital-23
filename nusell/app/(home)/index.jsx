@@ -1,13 +1,26 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Image } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
-import { SearchBar } from 'react-native-screens';
+//import { SearchBar } from 'react-native-screens';
 import { HeaderBar } from '../(auth)/_layout.jsx';
+
+const SearchBar = ({ query, setQuery }) => {
+  return (
+    <View>
+      <TextInput
+      placeholder="Enter Search"
+      onChangeText={(text) => setQuery(text)}
+      value={query} />
+    </View>
+  );
+};
 
 export default function HomePage() {
     const [posts, setPosts] = useState([]);
     const [refresh, setRefresh] = useState(false);
+    const [query, setQuery] = useState('');
+
 
     async function fetchPosts() {
         let { data } = await supabase.from('posts').select('*');
@@ -25,10 +38,18 @@ export default function HomePage() {
         }
     }, [refresh]);
 
+  
   return (
     <View style={{ flex: 1, justifyContent: 'center'}}>
+      <SearchBar query={query} setQuery={setQuery} />
         <FlatList 
-            data={posts}
+            data={posts.filter((post) => {
+              if (query === '') {
+                return post;
+              } else if (post.caption.toLowerCase().includes(query.toLowerCase())) {
+                return post;
+              }
+              })}
             renderItem={({ item }) => <PostItem post={item}/>} 
             refreshing={refresh}
             onRefresh={() => setRefresh(true)}
@@ -44,7 +65,6 @@ function PostItem({ post }) {
         
         <View style={styles.postslayout}>
             <HeaderBar />
-            <SearchBar />
             <Post username="liNUS" image={post.image_url} caption={post.caption} />
         </View>
     );
@@ -79,7 +99,7 @@ function Avatar() {
         );
       }
       
-      const styles = StyleSheet.create({
+      export const styles = StyleSheet.create({
         avatarContainer: {backgroundColor: 'white' },
         avatar: {
           width: 35,
