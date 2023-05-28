@@ -13,10 +13,6 @@ This is done through:
 - Verifying accounts using the NUS email
 1. This would create a sense of trust since all accounts are tagged to a legitimate person, ensuring that all users are members or NUS, thus reducing the likelihood of scams on the platform.
 
-## Team Members
-Alicia Yap <br />
-Lim YingXuan
-
 ## Main features
 1. Authentication system
 2. Posts system
@@ -31,23 +27,14 @@ Lim YingXuan
 ## User Guide
 
 ### Landing Page
-- Register for an account using an official NUS email
+- Register for an account using your NUS email
 - Login 
 
 ### Home Page
-Navigate and explore listed products using
-1. Searchbar
-2. Categories
-3. Simply scroll through recommended feed (where posts are shown based on your activity)
+Navigate and explore listed products using the searchbar
 
 ### Profile Page
-Customise your username, avatar, header background and biography
-See products you have listed
+Log out from your account
 
 ### Post creation page
-Choose multiple photos, input a title, description and categorical tags and post
-
-### Likes page
-Compiled all products you have liked in one page
-
-
+Choose a photo, input a caption  and post
