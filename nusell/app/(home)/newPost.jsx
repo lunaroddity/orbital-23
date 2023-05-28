@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Image } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { useAuth } from "../../contexts/auth";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
@@ -74,15 +74,31 @@ export default function NewPostPage() {
     }
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center'}}>
+        <View style={styles.view}>
             <HeaderBar />
-            <Text>Caption</Text>
-            <TextInput value={caption} onChangeText={setCaption} />
-            {errMsg !== '' && <Text>{errMsg}</Text>}
             <Image style= {{height: 200, width: 200}} source={{ uri: image }} />
+            <TextInput
+                style={styles.captionInput}
+                mode='outlined'
+                label='Caption'
+                activeOutlineColor='#003D7C'
+                value={caption}
+                onChangeText={setCaption} />
+            {errMsg !== '' && <Text>{errMsg}</Text>}
             <Button onPress={handleAddImage}>Add Image</Button>
             <Button onPress={handleSubmit}>Post</Button>
             {loading && <ActivityIndicator />}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    view: {
+        flex: 1,
+        justifyContent: 'center',
+        marginHorizontal: 20,
+    },
+    captionInput: {
+        backgroundColor: '#fff'
+    }
+});
