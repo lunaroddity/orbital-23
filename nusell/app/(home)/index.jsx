@@ -4,13 +4,16 @@ import { Text, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
 import { HeaderBar } from '../(auth)/_layout.jsx';
 
+// Function for search bar.
 const SearchBar = ({ query, setQuery }) => {
   return (
     <View>
       <TextInput
-      placeholder="Enter Search"
-      onChangeText={(text) => setQuery(text)}
-      value={query} />
+        backgroundColor="#fff"
+        mode='flat'
+        placeholder="Enter Search"
+        onChangeText={(text) => setQuery(text)}
+        value={query} />
     </View>
   );
 };
@@ -20,17 +23,18 @@ export default function HomePage() {
     const [refresh, setRefresh] = useState(false);
     const [query, setQuery] = useState('');
 
-
     async function fetchPosts() {
         let { data } = await supabase.from('posts').select('*');
         setPosts(data);
         setRefresh(false);
     }
     
+    // Initial post fetch on loading
     useEffect(() => {  
         fetchPosts();
     }, []);
 
+    // Post fetch upon pull to refresh
     useEffect(() => {
         if (refresh) {
             fetchPosts();
@@ -49,8 +53,8 @@ export default function HomePage() {
                 return post;
               }
               })}
-              numColumns={2}
-              keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <PostItem post={item}/>} 
             refreshing={refresh}
             onRefresh={() => setRefresh(true)}
@@ -72,61 +76,61 @@ function PostItem({ post }) {
 }
 
 function Avatar() {
-    return (
+  return (
     <View style={styles.avatarContainer}>
       <Image 
       style={styles.avatar}
       source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
     </View>
-    );
-    }
+  );
+}
 
-    function Header({username}) {
-        return (
-        <View style={styles.headerContainer}>
-          <Avatar />
-          <Text>{username}</Text>
-        </View>)
-      }
+function Header({username}) {
+  return (
+    <View style={styles.headerContainer}>
+      <Avatar />
+      <Text>{username}</Text>
+    </View>
+  );
+}
      
-      export function Post(props) {
-        const { username, image, caption } = props;
-        return (
-          <View style={styles.postContainer}>
-            <Header username={username} />
-            <Image style={styles.postImage} source={{ uri: image }} />
-            <Text>{caption}</Text>
-          </View>
-        );
-      }
+export function Post(props) {
+  const { username, image, caption } = props;
+  return (
+    <View style={styles.postContainer}>
+      <Header username={username} />
+      <Image style={styles.postImage} source={{ uri: image }} />
+      <Text>{caption}</Text>
+    </View>
+  );
+}
       
-      export const styles = StyleSheet.create({
-        avatarContainer: {backgroundColor: 'white' },
-        avatar: {
-          width: 35,
-          height: 35,
-          borderRadius: 100/2,
-          marginRight: 5,
-          borderColor: '#003D7C',
-          borderWidth: 2
-        },
-        headerContainer: {
-          flexDirection: 'row',
-          alignItems: 'center',
-        },
-        postImage: {
-          width: 175,
-          height: 175,
-        },
-        postContainer: {
-          padding: 8,
-          backgroundColor: 'white',
-          borderWidth: 1,
-          borderRadius: 10,
-          borderColor: 'black',
-        },
-        postslayout: {
-            flexDirection: 'row'
-        }
-      });
-      
+export const styles = StyleSheet.create({
+    avatarContainer: { backgroundColor: 'white' },
+    avatar: {
+      width: 35,
+      height: 35,
+      borderRadius: 50,
+      marginRight: 5,
+      borderColor: '#003D7C',
+      borderWidth: 2
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    postImage: {
+      width: 175,
+      height: 175,
+    },
+    postContainer: {
+      padding: 8,
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderRadius: 10,
+      borderColor: 'black',
+    },
+    postslayout: {
+        flexDirection: 'row'
+    }
+});
