@@ -22,7 +22,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.lunaroddity.nusell"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +38,11 @@
           "photosPermission": "The app accesses your photos to let you share them in your posts."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "85d3364c-9760-4243-ac27-0727ecbf46b9"
+      }
+    }
   }
 }
