@@ -7,11 +7,11 @@ Many students operate (or wish to operate) small businesses in their free time a
 
 We aim to create a platform where students can focus on developing their entrepreneurial spirit in a safe environment. This platform will enable them to focus on laying the foundations of their businesses and providing high-quality products and services to their customers. <br />
 This is done through: 
-- Limiting the user base to NUS students
-1. This allows students to promote their products and services without having to worry about having to compete with others internationally. 
-2. This allows more security and convenience in buying and selling as it only occurs within the NUS community.
-- Verifying accounts using the NUS email
-1. This would create a sense of trust since all accounts are tagged to a legitimate person, ensuring that all users are members or NUS, thus reducing the likelihood of scams on the platform.
+1. Limiting the user base to NUS students
+- This allows students to promote their products and services without having to worry about having to compete with others internationally. 
+- This allows more security and convenience in buying and selling as it only occurs within the NUS community.
+2. Verifying accounts using the NUS email
+- This would create a sense of trust since all accounts are tagged to a legitimate person, ensuring that all users are members or NUS, thus reducing the likelihood of scams on the platform.
 
 ## Main features
 1. Authentication system
