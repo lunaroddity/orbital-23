@@ -43,7 +43,7 @@ export default function HomePage() {
 
   
   return (
-    <View style={{ flex: 1, justifyContent: 'center'}}>
+    <View style={styles.view}>
       <SearchBar query={query} setQuery={setQuery} />
         <FlatList 
             data={posts.filter((post) => {
@@ -55,7 +55,7 @@ export default function HomePage() {
               })}
             numColumns={2}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <PostItem post={item}/>} 
+            renderItem={({ item }) => <PostItem post={item} />} 
             refreshing={refresh}
             onRefresh={() => setRefresh(true)}
             />
@@ -67,10 +67,12 @@ export default function HomePage() {
 // Since yet to be able to set username and profile pics, defaulted to liNUS
 function PostItem({ post }) {
     return (
-        
-        <View style={styles.postslayout}>
+        <View style={styles.postsLayout}>
             <HeaderBar />
-            <Post username="liNUS" image={post.image_url} caption={post.caption} />
+            <Post 
+              username="liNUS"
+              image={post.image_url}
+              caption={post.caption} />
         </View>
     );
 }
@@ -100,14 +102,16 @@ export function Post(props) {
     <View style={styles.postContainer}>
       <Header username={username} />
       <Image style={styles.postImage} source={{ uri: image }} />
-      <Text>{caption}</Text>
+      <Text style={styles.caption}>{caption}</Text>
     </View>
   );
 }
       
 export const styles = StyleSheet.create({
+    view: { flex: 1, backgroundColor: 'white' },
     avatarContainer: { backgroundColor: 'white' },
     avatar: {
+      flex: 1,
       width: 35,
       height: 35,
       borderRadius: 50,
@@ -116,21 +120,27 @@ export const styles = StyleSheet.create({
       borderWidth: 2
     },
     headerContainer: {
+      margin: 5,
       flexDirection: 'row',
       alignItems: 'center',
     },
     postImage: {
-      width: 175,
-      height: 175,
+      width: 160,
+      height: 160,
+    },
+    caption: {
+      padding: 5,
     },
     postContainer: {
-      padding: 8,
+      flex: 1,
+      alignItems: 'flex-start',
       backgroundColor: 'white',
       borderWidth: 1,
       borderRadius: 10,
       borderColor: 'black',
+      padding: 10,
     },
-    postslayout: {
-        flexDirection: 'row'
+    postsLayout: {
+      flex: 1,
     }
 });
