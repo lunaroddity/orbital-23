@@ -5,7 +5,7 @@ export default function HomeLayout() {
     return (
         <Tabs>
             <Tabs.Screen name="index" options={{ tabBarLabel: "Home" }} />
-            <Tabs.Screen name="newPost" options={{ tabBarLabel: "Add Post" }} />
+            <Tabs.Screen name="newPost" options={{ tabBarLabel: "Add Post", unmountOnBlur: true}} />
             <Tabs.Screen name="profile" options={{ tabBarLabel: "Profile" }} />
         </Tabs>
     );
