@@ -158,7 +158,7 @@ export default function NewPostPage() {
 
 const styles = StyleSheet.create({
     view: {
-        flex: 1,
+        // flex: 1,
         justifyContent: 'center',
         marginHorizontal: 20,
     },
@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
     },
     image: {
         height: 200,
-        width: 200
+        width: 200,
     }
 });
