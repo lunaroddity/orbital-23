@@ -24,9 +24,9 @@ export default function HomePage() {
     const [query, setQuery] = useState('');
 
     async function fetchPosts() {
-        let { data } = await supabase.from('posts').select('*');
-        setPosts(data);
-        setRefresh(false);
+      let { data } = await supabase.from('posts').select('*').order('inserted_at', { ascending: false });
+      setPosts(data);
+      setRefresh(false);
     }
     
     // Initial post fetch on loading
@@ -72,6 +72,7 @@ function PostItem({ post }) {
             <Post 
               username="liNUS"
               image={post.image_url}
+              title={post.title}
               description={post.description} />
         </View>
     );
@@ -97,11 +98,12 @@ function Header({username}) {
 }
      
 export function Post(props) {
-  const { username, image, description } = props;
+  const { username, image, title, description } = props;
   return (
     <View style={styles.postContainer}>
       <Header username={username} />
       <Image style={styles.postImage} source={{ uri: image }} />
+      <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
     </View>
   );
@@ -128,6 +130,10 @@ export const styles = StyleSheet.create({
       width: 160,
       height: 160,
     },
+    title: {
+      padding: 5,
+      fontWeight: 'bold',
+    },
     description: {
       padding: 5,
     },
@@ -141,6 +147,6 @@ export const styles = StyleSheet.create({
       padding: 10,
     },
     postsLayout: {
-      flex: 1,
+      // flex: 1,
     }
 });

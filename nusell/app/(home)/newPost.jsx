@@ -68,8 +68,6 @@ export default function NewPostPage() {
             setErrMsg(postInsertError.message);
         }
 
-        console.log('post upload successful, postId: ' + postId);
-
         if (images.length !== 0) {
             for (let i = 0; i < images.length; i++) {
                 // Upload image to storage in supabase.
@@ -79,7 +77,8 @@ export default function NewPostPage() {
                 .from('images')
                 .upload(imageName, { uri: images[i], type: 'jpg', name: 'name' }); 
 
-                console.log(`imageUploadData: ${JSON.stringify(imageUploadData)}` + ' i: ' + i);
+                console.log('i: ' + i);
+                console.log(`imageUploadData: ${JSON.stringify(imageUploadData)}`);
 
                 // If image cannot be uploaded, stop loading icon and show error message
                 if (imageUploadError) {
@@ -87,8 +86,6 @@ export default function NewPostPage() {
                     setErrMsg(imageUploadError.message);
                     return;
                 }
-
-                console.log(`data.path: ${JSON.stringify(imageUploadData.path)}`);
 
                 // Pull image URL from supabase.
                 const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(imageUploadData.path);
