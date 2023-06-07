@@ -49,7 +49,7 @@ export default function HomePage() {
             data={posts.filter((post) => {
               if (query === '') {
                 return post;
-              } else if (post.caption.toLowerCase().includes(query.toLowerCase())) {
+              } else if (post.description.toLowerCase().includes(query.toLowerCase())) {
                 return post;
               }
               })}
@@ -72,7 +72,7 @@ function PostItem({ post }) {
             <Post 
               username="liNUS"
               image={post.image_url}
-              caption={post.caption} />
+              description={post.description} />
         </View>
     );
 }
@@ -97,12 +97,12 @@ function Header({username}) {
 }
      
 export function Post(props) {
-  const { username, image, caption } = props;
+  const { username, image, description } = props;
   return (
     <View style={styles.postContainer}>
       <Header username={username} />
       <Image style={styles.postImage} source={{ uri: image }} />
-      <Text style={styles.caption}>{caption}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   );
 }
@@ -128,7 +128,7 @@ export const styles = StyleSheet.create({
       width: 160,
       height: 160,
     },
-    caption: {
+    description: {
       padding: 5,
     },
     postContainer: {
