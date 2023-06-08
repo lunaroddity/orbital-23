@@ -5,19 +5,30 @@ import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
 export default function RegisterPage() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const[password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading , setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
     
     const handleSubmit = async () => {
-        if (email === '') {
-            setErrMsg('Email cannot be empty.');
+        if (firstName === '') {
+            setErrMsg('First Name cannot be empty.');
             return;
         }
-
-        if (password === '') {
-            setErrMsg('Password cannot be empty.');
+        if (lastName === '') {
+            setErrMsg('Last Name cannot be empty.');
+            return;
+        }
+        if (username === '') {
+            setErrMsg('Username cannot be empty.');
+            return;
+        }
+        if (email === '') {
+            setErrMsg('Email cannot be empty.');
             return;
         }
 
@@ -30,6 +41,22 @@ export default function RegisterPage() {
             setErrMsg('Please use your NUS email.');
             return;
         }
+
+        if (password === '') {
+            setErrMsg('Password cannot be empty.');
+            return;
+        }
+
+        if (password.length <= 8) {
+            setErrMsg('Password must have more than 8 characters.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setErrMsg('Passwords do not match.');
+            return;
+        }
+
 
         setLoading(true); // Renders a spinning loading icon.
         const { error } = supabase.auth.signUp({ email, password });
@@ -44,6 +71,39 @@ export default function RegisterPage() {
         <View style = {styles.view}>
             <HeaderBar />
 
+            {/* FirstName input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='First Name'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                textContentType='emailAddress'
+                value={firstName}
+                onChangeText={setFirstName} />
+
+            {/* LastName input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Last Name'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                textContentType='emailAddress'
+                value={lastName}
+                onChangeText={setLastName} />
+
+            {/* Username input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Username'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                textContentType='username'
+                value={username}
+                onChangeText={setUsername} />
+
             {/* Email input */}
             <TextInput
                 style={styles.emailInput}
@@ -57,7 +117,7 @@ export default function RegisterPage() {
 
             {/* Password input */}
             <TextInput
-                style={styles.passwordInput}
+                style={styles.emailInput}
                 mode='outlined'
                 label='Password'
                 activeOutlineColor='#003D7C'
@@ -66,6 +126,17 @@ export default function RegisterPage() {
                 textContentType='password'
                 value={password}
                 onChangeText={setPassword} />
+
+            {/* ConfirmPassword input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Confirm Password'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                textContentType='Confirm Password'
+                value={confirmPassword}
+                onChangeText={setConfirmPassword} />
 
             {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
 
