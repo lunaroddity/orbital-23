@@ -51,8 +51,9 @@ export default function NewPostPage() {
             return;
         }
 
-        const postId = randomUUID();
         setLoading(true);
+        const postId = randomUUID();
+        
         // Uploads contents of new post to posts database and retrieves the post as a single object.
         const { data: postInsertData, error: postInsertError } = await supabase
         .from('posts')

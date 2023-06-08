@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Image } from 'react-native';
+import { StyleSheet, View, FlatList, Image, TouchableHighlight } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
-import { supabase } from '../../lib/supabase';
-import { HeaderBar } from '../(auth)/_layout.jsx';
+import { supabase } from '../../../lib/supabase';
+import { HeaderBar } from '../../(auth)/_layout.jsx';
+import { useRouter } from 'expo-router';
 
 // Function for search bar.
 const SearchBar = ({ query, setQuery }) => {
@@ -40,10 +41,10 @@ export default function HomePage() {
             fetchPosts();
         }
     }, [refresh]);
-
   
   return (
     <View style={styles.view}>
+      <HeaderBar />
       <SearchBar query={query} setQuery={setQuery} />
         <FlatList 
             data={posts.filter((post) => {
@@ -65,15 +66,20 @@ export default function HomePage() {
 
 // Function to render posts in the home feed.
 // Since yet to be able to set username and profile pics, defaulted to liNUS
+// TODO: make posts interactive
 function PostItem({ post }) {
+  const router = useRouter();
     return (
-        <View style={styles.postsLayout}>
-            <HeaderBar />
+        <View>
+          <TouchableHighlight 
+            onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
+          }>
             <Post 
               username="liNUS"
               image={post.image_url}
               title={post.title}
               description={post.description} />
+          </TouchableHighlight>
         </View>
     );
 }
@@ -145,8 +151,5 @@ export const styles = StyleSheet.create({
       borderRadius: 10,
       borderColor: 'black',
       padding: 10,
-    },
-    postsLayout: {
-      // flex: 1,
     }
 });
