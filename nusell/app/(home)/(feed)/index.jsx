@@ -74,7 +74,7 @@ function PostItem({ post }) {
           <TouchableHighlight 
             onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
           }>
-            <Post 
+            <Post
               username="liNUS"
               image={post.image_url}
               title={post.title}
@@ -83,13 +83,15 @@ function PostItem({ post }) {
         </View>
     );
 }
-
-function Avatar() {
+     
+export function Post( props ) {
+  const { username, image, title, description } = props;
   return (
-    <View style={styles.avatarContainer}>
-      <Image 
-      style={styles.avatar}
-      source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+    <View style={styles.postContainer}>
+      <Header username={username} />
+      <Image style={styles.postImage} source={{ uri: image }} />
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   );
 }
@@ -102,15 +104,13 @@ function Header({username}) {
     </View>
   );
 }
-     
-export function Post(props) {
-  const { username, image, title, description } = props;
+
+function Avatar() {
   return (
-    <View style={styles.postContainer}>
-      <Header username={username} />
-      <Image style={styles.postImage} source={{ uri: image }} />
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+    <View style={styles.avatarContainer}>
+      <Image 
+      style={styles.avatar}
+      source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
     </View>
   );
 }
