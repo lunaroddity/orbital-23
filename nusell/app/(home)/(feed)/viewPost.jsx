@@ -22,7 +22,7 @@ export default function ViewPostPage() {
     }, [id]);
     
     return (
-        <View style={{flex: 1, justifyContent:'center'}}>
+        <View>
             <Stack.Screen 
                 options={{
                     headerStyle: { backgroundColor: '#003D7C'},
@@ -47,9 +47,9 @@ function Post( props ) {
     <View>
       <Header username={username} />
       <ImageCarousel id={id} />
-        <Text>{title}</Text>
-        <Text>{price}</Text>
-        <Text>{description}</Text>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.price}>{price}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   );
 }
@@ -59,7 +59,7 @@ function Header({username}) {
   return (
     <View style={styles.headerContainer}>
       <Avatar />
-      <Text>{username}</Text>
+      <Text style={styles.textHeader}>{username}</Text>
     </View>
   );
   }
@@ -140,7 +140,7 @@ function Header({username}) {
   // Creates the progress bar to track which image the user is currently on.
   // Input range is the previous index, the current index and the next index.
   function ScrollProgress({ data, scrollX, index }) {
-    console.log("index * wdith" + (index * width));
+    console.log("index * width: " + (index * width));
     console.log(`scrollX: ${JSON.stringify(scrollX)}`)
 
     return (
@@ -163,13 +163,10 @@ function Header({username}) {
   }
 
   export const styles = StyleSheet.create({
-    view: { 
-      flex: 1,
-      width,
-      height,
-      backgroundColor: "white",
+    avatarContainer: {
+      width: width * 0.1,
+      height: width * 0.1,
     },
-    avatarContainer: { backgroundColor: "white" },
     avatar: {
       flex: 1,
       width: 35,
@@ -188,12 +185,22 @@ function Header({username}) {
       width,
       height: width,
     },
+    textHeader: {
+      paddingHorizontal: 5,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
     title: {
-      padding: 5,
+      paddingHorizontal: 10,
+      fontSize: 22,
+    },
+    price: {
+      paddingHorizontal: 10,
+      fontSize: 22,
       fontWeight: "bold",
     },
     description: {
-      padding: 5,
+      paddingHorizontal: 10,
     },
     dot: {
       width: 7,
