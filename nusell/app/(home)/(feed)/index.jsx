@@ -20,27 +20,27 @@ const SearchBar = ({ query, setQuery }) => {
 };
 
 export default function HomePage() {
-    const [posts, setPosts] = useState([]);
-    const [refresh, setRefresh] = useState(false);
-    const [query, setQuery] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [query, setQuery] = useState('');
 
-    async function fetchPosts() {
-      let { data } = await supabase.from('posts').select('*').order('inserted_at', { ascending: false });
-      setPosts(data);
-      setRefresh(false);
-    }
-    
-    // Initial post fetch on loading
-    useEffect(() => {  
-        fetchPosts();
-    }, []);
+  async function fetchPosts() {
+    let { data } = await supabase.from('posts').select('*').order('inserted_at', { ascending: false });
+    setPosts(data);
+    setRefresh(false);
+  }
+  
+  // Initial post fetch on loading
+  useEffect(() => {  
+      fetchPosts();
+  }, []);
 
-    // Post fetch upon pull to refresh
-    useEffect(() => {
-        if (refresh) {
-            fetchPosts();
-        }
-    }, [refresh]);
+  // Post fetch upon pull to refresh
+  useEffect(() => {
+      if (refresh) {
+          fetchPosts();
+      }
+  }, [refresh]);
   
   return (
     <View style={styles.view}>
@@ -70,17 +70,17 @@ export default function HomePage() {
 function PostItem({ post }) {
   const router = useRouter();
     return (
-        <View>
-          <TouchableHighlight 
-            onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
-          }>
-            <Post
-              username="liNUS"
-              image={post.image_url}
-              title={post.title}
-              description={post.description} />
-          </TouchableHighlight>
-        </View>
+      <View>
+        <TouchableHighlight 
+          onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
+        }>
+          <Post
+            username="liNUS"
+            image={post.image_url}
+            title={post.title}
+            description={post.description} />
+        </TouchableHighlight>
+      </View>
     );
 }
      
@@ -116,40 +116,40 @@ function Avatar() {
 }
       
 export const styles = StyleSheet.create({
-    view: { flex: 1, backgroundColor: 'white' },
-    avatarContainer: { backgroundColor: 'white' },
-    avatar: {
-      flex: 1,
-      width: 35,
-      height: 35,
-      borderRadius: 50,
-      marginRight: 5,
-      borderColor: '#003D7C',
-      borderWidth: 2
-    },
-    headerContainer: {
-      margin: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    postImage: {
-      width: 160,
-      height: 160,
-    },
-    title: {
-      padding: 5,
-      fontWeight: 'bold',
-    },
-    description: {
-      padding: 5,
-    },
-    postContainer: {
-      flex: 1,
-      alignItems: 'flex-start',
-      backgroundColor: 'white',
-      borderWidth: 1,
-      borderRadius: 10,
-      borderColor: 'black',
-      padding: 10,
-    }
+  view: { flex: 1, backgroundColor: 'white' },
+  avatarContainer: { backgroundColor: 'white' },
+  avatar: {
+    flex: 1,
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    marginRight: 5,
+    borderColor: '#003D7C',
+    borderWidth: 2
+  },
+  headerContainer: {
+    margin: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  postImage: {
+    width: 160,
+    height: 160,
+  },
+  title: {
+    padding: 5,
+    fontWeight: 'bold',
+  },
+  description: {
+    padding: 5,
+  },
+  postContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: 'black',
+    padding: 10,
+  }
 });
