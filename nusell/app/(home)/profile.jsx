@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { Button } from 'react-native-paper';
 import { supabase } from "../../lib/supabase";
 import { HeaderBar } from '../(auth)/_layout.jsx';
+import { Link } from 'expo-router';
 
 
 export default function ProfilePage() {
@@ -13,6 +14,10 @@ export default function ProfilePage() {
                 buttonColor ="#003D7C"
                 rippleColor="#022E5B" 
                 onPress={() => supabase.auth.signOut()}>Logout</Button>
+
+        <Link href="/editprofile">
+                <Button textColor='#003D7C'>{"Edit profile"}</Button>
+            </Link>
         </View>
     )
 }

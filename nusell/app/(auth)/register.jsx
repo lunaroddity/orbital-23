@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { View, StyleSheet } from 'react-native';
-import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
+import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
-import { showMessage } from "react-native-flash-message";
-
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
@@ -46,7 +44,7 @@ export default function RegisterPage() {
         }
 
         setLoading(true); // Renders a spinning loading icon.
-
+        
         const { error: authError } = supabase.auth.signUp(
             { 
                 email: email, 
@@ -57,10 +55,16 @@ export default function RegisterPage() {
         if (authError) {
             setErrMsg(authError.message);
             return;
-        } else {
-            showMessage({ message: "success!", type: "success",
-        });
-        }
+        } 
+
+        Alert.alert('Registration successful!', 'Check your email for confirmation', [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Handle the OK button press if needed
+              },
+            },
+          ]);
 
         setLoading(false); // Stops rendering loading icon.        
 
@@ -99,6 +103,7 @@ export default function RegisterPage() {
                 mode='outlined'
                 label='Confirm Password'
                 activeOutlineColor='#003D7C'
+                secureTextEntry
                 autoCapitalize='none'
                 textContentType='password'
                 value={confirmPassword}

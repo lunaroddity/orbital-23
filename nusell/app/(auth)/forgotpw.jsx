@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
@@ -30,6 +30,16 @@ export default function ForgotPassword() {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: '/resetpw',
           });
+
+        Alert.alert('Email sent!', 'Check your email', [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Handle the OK button press if needed
+              },
+            },
+          ]);
+
         setLoading(false); // Stops rendering loading icon.
         if (error) {
             setErrMsg(error.message);
