@@ -78,20 +78,20 @@ function PostItem({ post }) {
             username="liNUS"
             image={post.image_url}
             title={post.title}
-            description={post.description} />
+            price={post.price} />
         </TouchableHighlight>
       </View>
     );
 }
      
 export function Post( props ) {
-  const { username, image, title, description } = props;
+  const { username, image, title, price } = props;
   return (
     <View style={styles.postContainer}>
       <Header username={username} />
       <Image style={styles.postImage} source={{ uri: image }} />
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <Text style={styles.price}>${price}</Text>
     </View>
   );
 }
@@ -124,8 +124,6 @@ export const styles = StyleSheet.create({
     height: 35,
     borderRadius: 50,
     marginRight: 5,
-    borderColor: '#003D7C',
-    borderWidth: 2
   },
   headerContainer: {
     margin: 5,
@@ -140,7 +138,7 @@ export const styles = StyleSheet.create({
     padding: 5,
     fontWeight: 'bold',
   },
-  description: {
+  price: {
     padding: 5,
   },
   postContainer: {

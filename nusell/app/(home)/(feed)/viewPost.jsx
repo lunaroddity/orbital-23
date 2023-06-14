@@ -132,7 +132,7 @@ function Header({username}) {
           onViewableItemsChanged={handleOnViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
         />
-        <ScrollProgress data={images} scrollX={scrollX} index={index} />
+        {images.length > 1 && <ScrollProgress data={images} scrollX={scrollX} index={index} />}
       </View>
     );
   }
@@ -173,8 +173,6 @@ function Header({username}) {
       height: 35,
       borderRadius: 50,
       marginRight: 5,
-      borderColor: "#003D7C",
-      borderWidth: 2
     },
     headerContainer: {
       margin: 5,

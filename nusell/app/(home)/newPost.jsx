@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Image, StyleSheet, FlatList } from 'react-native';
+import { View, Image, StyleSheet, FlatList, Pressable, ScrollView } from 'react-native';
 import { useAuth } from "../../contexts/auth";
 import { useRouter } from "expo-router";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
@@ -8,14 +8,18 @@ import * as ImagePicker from "expo-image-picker";
 import { HeaderBar } from '../(auth)/_layout.jsx';
 import 'react-native-get-random-values';
 import { randomUUID } from 'expo-crypto';
-
+import { Ionicons } from '../../node_modules/@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 
 export default function NewPostPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
     const [images, setImages] = useState([]);
     const [errMsg, setErrMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCondition, setSelectedCondition] = useState(null);
     const { user } = useAuth();
     const router = useRouter();
 
@@ -51,6 +55,11 @@ export default function NewPostPage() {
             return;
         }
 
+        if (price === '') {
+            setErrMsg('Price cannot be empty.');
+            return;
+        }
+
         setLoading(true);
         const postId = randomUUID();
         
@@ -61,6 +70,9 @@ export default function NewPostPage() {
             id: postId,
             title: title,
             description: description,
+            price: price,
+            category: selectedCategory,
+            condition: selectedCondition,
             user_id: user.id})
         .select()
         .single();
@@ -126,45 +138,121 @@ export default function NewPostPage() {
         router.push("/");
     }
 
+    const addImageButton = () => {
+        return (
+            <Pressable onPress={handleAddImage}><Ionicons name='add-circle-outline' size={60} /></Pressable>
+        );
+    }
+
     return (
         <View style={styles.view}>
+            <ScrollView showsVerticalScrollIndicator={false}>
             <HeaderBar />
+
+            <Text style={styles.header}>Photos</Text>
             {images !== 0 && <FlatList 
                 data={images}
                 renderItem={({ item }) => <Image style= {styles.image} source={{ uri: item }} />}
                 horizontal={true}
-                ItemSeparatorComponent={<View style={{width: 20}}/>}
+                ItemSeparatorComponent={<View style={{width: 10}}/>}
+                ListFooterComponent={addImageButton}
+                ListFooterComponentStyle={{ margin: 10, justifyContent: 'center'}}
             />}
+
+            <Text style={styles.header}>About your product</Text>
+            <Text style={styles.InputHeader}>Category</Text>
+            <View style={{backgroundColor:'#fff'}}>
+                <Picker
+                    selectedValue={selectedCategory}
+                    onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+                    >
+                        <Picker.Item label="Category of product" enabled={false} />
+                        <Picker.Item label="Beauty & Personal Care" value="beauty"/>
+                        <Picker.Item label="Business Services" value="business-services" />
+                        <Picker.Item label="Food & Drinks" value="food"/>
+                        <Picker.Item label="Furniture" value="furniture"/>
+                        <Picker.Item label="Handicrafts" value="handicrafts" />
+                        <Picker.Item label="Hobbies" value="hobbies" />
+                        <Picker.Item label="Home Appliances" value="appliances" />
+                        <Picker.Item label="Learning & Enrichment" value="learning" />
+                        <Picker.Item label="Lifestyle Services" value="lifestyle-services" />
+                        <Picker.Item label="Men's Fashion" value="mens-fashion" />
+                        <Picker.Item label="Technology" value="tech" />
+                        <Picker.Item label="Women's Fashion" value="womens-fashion" />
+                        
+                </Picker>
+            </View>
+
+            <Text style={styles.InputHeader}>Title</Text>
             <TextInput
-                style={styles.descriptionInput}
-                mode='outlined'
-                label='Title'
-                activeOutlineColor='#003D7C'
+                style={{backgroundColor: '#fff'}}
+                placeholder='Name your product'
+                underlineColor="transparent"
+                activeUnderlineColor='#003D7C'
                 value={title}
                 onChangeText={setTitle} />
+
+            <Text style={styles.InputHeader}>Condition</Text>
+            <View style={{backgroundColor:'#fff'}}>
+                <Picker
+                    selectedValue={selectedCondition}
+                    onValueChange={(itemValue) => setSelectedCondition(itemValue)}
+                    >
+                        <Picker.Item label="Condition of product" enabled={false} />
+                        <Picker.Item label="Brand New" value="brand-new"/>
+                        <Picker.Item label="Like New" value="like-new" />
+                        <Picker.Item label="Lightly Used" value="lightly-used" />
+                        <Picker.Item label="Well Used" value="well-used" />
+                        <Picker.Item label="Heavily Used" value="heavily-used" />
+                </Picker>
+            </View>
+            
+
+            <Text style={styles.InputHeader}>Description</Text>
             <TextInput
-                style={styles.descriptionInput}
-                mode='outlined'
-                label='Description'
-                activeOutlineColor='#003D7C'
+                style={{backgroundColor: '#fff'}}
+                placeholder='Describe your product'
+                underlineColor="transparent"
+                activeUnderlineColor='#003D7C'
+                multiline={true}
                 value={description}
                 onChangeText={setDescription} />
+
+            <Text style={styles.InputHeader}>Price ($)</Text>
+            <TextInput
+                style={{backgroundColor: '#fff'}}
+                placeholder='Price'
+                underlineColor="transparent"
+                activeUnderlineColor='#003D7C'
+                value={price}
+                onChangeText={setPrice} />
+
             {errMsg !== '' && <Text>{errMsg}</Text>}
-            <Button onPress={handleAddImage}>Add Images</Button>
-            <Button onPress={handleSubmit}>Post</Button>
+            <Button
+                style={{marginVertical: 25}}
+                mode='contained'
+                buttonColor="#003D7C"
+                onPress={handleSubmit}>Upload</Button>
             {loading && <ActivityIndicator />}
+            </ScrollView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     view: {
-        // flex: 1,
         justifyContent: 'center',
         marginHorizontal: 20,
     },
-    descriptionInput: {
-        backgroundColor: '#fff'
+    header: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginTop: 15,
+    },
+    InputHeader: {
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 5,
     },
     image: {
         height: 200,
