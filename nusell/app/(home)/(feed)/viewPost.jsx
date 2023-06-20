@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Image, FlatList, Dimensions, Animated } from "react-native";
-import { Text } from "react-native-paper";
-import { useLocalSearchParams, Stack } from "expo-router";
+import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView } from "react-native";
+import { Text, Button } from "react-native-paper";
+import { useLocalSearchParams, Stack, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 
 const { width, height } = Dimensions.get('screen');
@@ -35,21 +35,36 @@ export default function ViewPostPage() {
                 username="liNUS"
                 title={post.title}
                 description={post.description}
-                price="$50"/>
+                price={post.price}
+                category={post.category}
+                condition={post.condition}/>
         </View>
     );
 }
 
 // Function creates the post for viewing.
 function Post( props ) {
-  const { id, username, title, description, price } = props;
+  const { id, username, title, description, price, category, condition } = props;
+  const router = useRouter();
+  const handleCategoryPress = () => {
+    console.log("category pressed");
+  };
+
   return (
     <View>
-      <Header username={username} />
-      <ImageCarousel id={id} />
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.price}>{price}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Header username={username} />
+        <ImageCarousel id={id} />
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>${price}</Text>
+        <View style={{marginVertical: 15}}>
+          <Text style={styles.textHeader}>Condition</Text>
+          <Text style={styles.description}>{condition}</Text>
+          <Text style={styles.textHeader}>Description</Text>
+          <Text style={styles.description}>{description}</Text>
+        </View>
+        <Button onPress={handleCategoryPress}>{category}</Button>
+      </ScrollView>
     </View>
   );
 }
@@ -59,7 +74,7 @@ function Header({username}) {
   return (
     <View style={styles.headerContainer}>
       <Avatar />
-      <Text style={styles.textHeader}>{username}</Text>
+      <Text style={styles.username}>{username}</Text>
     </View>
   );
   }
@@ -162,7 +177,7 @@ function Header({username}) {
     );
   }
 
-  export const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     avatarContainer: {
       width: width * 0.1,
       height: width * 0.1,
@@ -183,9 +198,15 @@ function Header({username}) {
       width,
       height: width,
     },
-    textHeader: {
+    username: {
       paddingHorizontal: 5,
       fontSize: 16,
+      fontWeight: 'bold',
+    },
+    textHeader: {
+      paddingHorizontal: 10,
+      marginVertical: 3,
+      fontSize: 18,
       fontWeight: 'bold',
     },
     title: {

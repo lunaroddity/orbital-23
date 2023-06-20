@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Image, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, FlatList, Image, TouchableHighlight, Dimensions } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { supabase } from '../../../lib/supabase';
 import { HeaderBar } from '../../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
+
+const { width, height } = Dimensions.get('screen');
+const halfWidth = width / 2;
 
 // Function for search bar.
 const SearchBar = ({ query, setQuery }) => {
@@ -66,7 +69,6 @@ export default function HomePage() {
 
 // Function to render posts in the home feed.
 // Since yet to be able to set username and profile pics, defaulted to liNUS
-// TODO: make posts interactive
 function PostItem({ post }) {
   const router = useRouter();
     return (
@@ -135,19 +137,17 @@ export const styles = StyleSheet.create({
     height: 160,
   },
   title: {
-    padding: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 3,
     fontWeight: 'bold',
   },
   price: {
-    padding: 5,
+    paddingHorizontal: 5,
   },
   postContainer: {
-    flex: 1,
+    width: halfWidth,
     alignItems: 'flex-start',
     backgroundColor: 'white',
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: 'black',
     padding: 10,
   }
 });

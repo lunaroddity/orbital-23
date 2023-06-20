@@ -167,18 +167,18 @@ export default function NewPostPage() {
                     onValueChange={(itemValue) => setSelectedCategory(itemValue)}
                     >
                         <Picker.Item label="Category of product" enabled={false} />
-                        <Picker.Item label="Beauty & Personal Care" value="beauty"/>
-                        <Picker.Item label="Business Services" value="business-services" />
-                        <Picker.Item label="Food & Drinks" value="food"/>
-                        <Picker.Item label="Furniture" value="furniture"/>
-                        <Picker.Item label="Handicrafts" value="handicrafts" />
-                        <Picker.Item label="Hobbies" value="hobbies" />
-                        <Picker.Item label="Home Appliances" value="appliances" />
-                        <Picker.Item label="Learning & Enrichment" value="learning" />
-                        <Picker.Item label="Lifestyle Services" value="lifestyle-services" />
-                        <Picker.Item label="Men's Fashion" value="mens-fashion" />
-                        <Picker.Item label="Technology" value="tech" />
-                        <Picker.Item label="Women's Fashion" value="womens-fashion" />
+                        <Picker.Item label="Beauty & Personal Care" value="Beauty & Personal Care"/>
+                        <Picker.Item label="Business Services" value="Business Services" />
+                        <Picker.Item label="Food & Drinks" value="Food & Drinks"/>
+                        <Picker.Item label="Furniture" value="Furniture"/>
+                        <Picker.Item label="Handicrafts" value="Handicrafts" />
+                        <Picker.Item label="Hobbies" value="Hobbies" />
+                        <Picker.Item label="Home Appliances" value="Home Appliances" />
+                        <Picker.Item label="Learning & Enrichment" value="Learning & Enrichment" />
+                        <Picker.Item label="Lifestyle Services" value="Lifestyle Services" />
+                        <Picker.Item label="Men's Fashion" value="Men's Fashion" />
+                        <Picker.Item label="Technology" value="Technology" />
+                        <Picker.Item label="Women's Fashion" value="Women's Fashion" />
                         
                 </Picker>
             </View>
@@ -199,11 +199,11 @@ export default function NewPostPage() {
                     onValueChange={(itemValue) => setSelectedCondition(itemValue)}
                     >
                         <Picker.Item label="Condition of product" enabled={false} />
-                        <Picker.Item label="Brand New" value="brand-new"/>
-                        <Picker.Item label="Like New" value="like-new" />
-                        <Picker.Item label="Lightly Used" value="lightly-used" />
-                        <Picker.Item label="Well Used" value="well-used" />
-                        <Picker.Item label="Heavily Used" value="heavily-used" />
+                        <Picker.Item label="Brand New" value="Brand New"/>
+                        <Picker.Item label="Like New" value="Like New" />
+                        <Picker.Item label="Lightly Used" value="Lightly Used" />
+                        <Picker.Item label="Well Used" value="Well Used" />
+                        <Picker.Item label="Heavily Used" value="Heavily Used" />
                 </Picker>
             </View>
             
