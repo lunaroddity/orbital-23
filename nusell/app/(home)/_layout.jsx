@@ -5,7 +5,6 @@ export default function HomeLayout() {
     const homeIcon = ({ focused }) => {
         let iconName;
         iconName = focused ? "home" : "home-outline";
-        console.log(focused);
         return <Ionicons name={iconName} size={30} color={"black"} />
     }
 
