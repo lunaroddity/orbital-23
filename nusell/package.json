@@ -14,7 +14,10 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.17.11",
-    "@react-native-community/netinfo": "9.3.7",
+    "@react-native-picker/picker": "2.4.8",
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
+    "@react-navigation/stack": "^6.3.16",
     "@supabase/supabase-js": "^2.22.0",
     "expo": "~48.0.15",
     "expo-av": "~13.2.1",

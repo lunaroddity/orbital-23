@@ -3,15 +3,14 @@ import { View } from 'react-native';
 import { useChatClient } from "./useChatClient";
 import { ChatProvider, useChat } from '../../../contexts/chat';
 import { useAuth } from '../../../contexts/auth';
-import { ChannelList } from 'stream-chat-expo';
-import { useRouter } from 'expo-router';
+import { ChannelList, Channel, MessageList, MessageInput } from 'stream-chat-expo';
+import { createStackNavigator } from '@react-navigation/stack';
 
 // Used to determine whether to render the chat components.
 export default function ChatPage() {
   const { clientIsReady } = useChatClient();
   const { user } = useAuth();
-  const router = useRouter();
-  const { setChannel } = useChat();
+  const Stack = createStackNavigator();
 
   if (!clientIsReady) {
     return (
@@ -30,17 +29,41 @@ export default function ChatPage() {
   const sort = {
     last_message_at: -1,
   }
+  
+  const ChannelListScreen = ( props ) => {
+    const { setChannel } = useChat();
+
+    return (
+      <ChannelList
+        onSelect={(channel) => {
+          const { navigation } = props;
+          setChannel(channel);
+          navigation.navigate('ChannelScreen');
+        }}
+          filters={filters}
+          sort={sort} 
+      />
+    );
+  }
+
+  const ChannelScreen = ( props ) => {
+    const { channel } = useChat();
+
+    return (
+      <Channel channel={channel}>
+        <MessageList />
+        <MessageInput />
+      </Channel>
+    );
+  }
 
   return (
     <ChatProvider>
       <View style={{flex: 1, justifyContent: 'center'}}>
-        <ChannelList
-        onSelect={(channel) => {
-          setChannel(channel);
-          router.push({ pathname: "(chat)/channelScreen", params: {channel: channel} })
-          }}
-          filters={filters}
-          sort={sort}/>
+        <Stack.Navigator>
+          <Stack.Screen name='ChannelListScreen' component={ChannelListScreen} />
+          <Stack.Screen name='ChannelScreen' component={ChannelScreen} />
+        </Stack.Navigator>
       </View>
     </ChatProvider>
   );
