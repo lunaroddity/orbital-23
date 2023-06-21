@@ -59,10 +59,23 @@ export default function ChatPage() {
 
   return (
     <ChatProvider>
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={{flex: 1, justifyContent: "flex-start" }}>
         <Stack.Navigator>
-          <Stack.Screen name='ChannelListScreen' component={ChannelListScreen} />
-          <Stack.Screen name='ChannelScreen' component={ChannelScreen} />
+          <Stack.Screen 
+            name='ChannelListScreen'
+            options={{ 
+              title: "Chat",
+              headerStyle: {backgroundColor: "#003D7C"},
+              headerTintColor: "#fff"}}
+            component={ChannelListScreen} 
+          />
+          <Stack.Screen
+            name='ChannelScreen'
+            options={{
+              headerStyle: {backgroundColor: "#003D7C"},
+              headerTintColor: "#fff"}}
+            component={ChannelScreen}
+          />
         </Stack.Navigator>
       </View>
     </ChatProvider>
