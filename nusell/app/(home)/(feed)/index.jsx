@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Image, TouchableHighlight, Dimensions } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { supabase } from '../../../lib/supabase';
 import { HeaderBar } from '../../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
@@ -26,46 +26,105 @@ export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
+  const [categoryUpdated, setCategoryUpdated] = useState(false);
 
   async function fetchPosts() {
-    let { data } = await supabase.from('posts').select('*').order('inserted_at', { ascending: false });
+    let { data } = await supabase
+        .from('posts')
+        .select('*')
+        .order('inserted_at', { ascending: false });
     setPosts(data);
     setRefresh(false);
+  }
+
+  async function fetchPostsByCategory({ title }) {
+    console.log("category: " + title);
+    let { data } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('category', `${title}`)
+        .order('inserted_at', { ascending: false });
+    setPosts(data);
+    setCategoryUpdated(false);
   }
   
   // Initial post fetch on loading
   useEffect(() => {  
-      fetchPosts();
+    fetchPosts();
   }, []);
 
   // Post fetch upon pull to refresh
   useEffect(() => {
-      if (refresh) {
-          fetchPosts();
-      }
+    if (refresh) {
+      fetchPosts();
+    }
   }, [refresh]);
+
+  useEffect(() => {
+    if (categoryUpdated) {
+      if (category === "All"){
+        fetchPosts();
+      } else {
+        fetchPostsByCategory({title: category});
+      }
+    }
+  }, [categoryUpdated, category]);
+
+  // Function for category button component
+  function CategoryButton({title}) {
+    const handleCategoryPress = () => {
+      setCategory(title); 
+      console.log("updatedCategory: " + category);
+      setCategoryUpdated(true);
+    }
+  
+    return (<Button mode="contained" style={{backgroundColor: "#003D7C"}} onPress={handleCategoryPress}>{title}</Button>);
+  }
+
+  const categoryArr = ["All", "Beauty & Personal Care", "Business Services", "Food & Drinks", "Furniture",
+      "Handicrafts", "Hobbies", "Home Appliances", "Learning & Enrichment", "Lifestyle Services", 
+      "Men's Fashion", "Technology", "Women's Fashion"];
+
+  const CategoryList = () => {
+    return (
+      <View style={{marginLeft: 5, marginVertical: 5}}>
+        <FlatList
+          data={categoryArr}
+          renderItem={({item}) => <CategoryButton title={item} />}
+          keyExtractor={(item) => item}
+          horizontal={true}
+          ItemSeparatorComponent={<View style={{width: 3}} />}
+        />
+      </View>
+      
+    );
+  };
   
   return (
     <View style={styles.view}>
       <HeaderBar />
       <SearchBar query={query} setQuery={setQuery} />
-        <FlatList 
-            data={posts.filter((post) => {
-              if (query === '') {
-                return post;
-              } else if (post.description.toLowerCase().includes(query.toLowerCase())) {
-                return post;
-              }
-              })}
-            numColumns={2}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <PostItem post={item} />} 
-            refreshing={refresh}
-            onRefresh={() => setRefresh(true)}
-            />
+      <CategoryList />
+      <FlatList 
+        data={posts.filter((post) => {
+          if (query === '') {
+            return post;
+          } else if (post.description.toLowerCase().includes(query.toLowerCase())) {
+            return post;
+          }
+          })}
+        numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <PostItem post={item} />} 
+        refreshing={refresh}
+        onRefresh={() => setRefresh(true)}
+      />
     </View>
-    );
+  );
 }
+
+
 
 // Function to render posts in the home feed.
 // Since yet to be able to set username and profile pics, defaulted to liNUS

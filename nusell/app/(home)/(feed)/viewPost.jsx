@@ -57,7 +57,7 @@ function Post( props ) {
         <ImageCarousel id={id} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
-        <View style={{marginVertical: 15}}>
+        <View style={{marginVertical: 7}}>
           <Text style={styles.textHeader}>Condition</Text>
           <Text style={styles.description}>{condition}</Text>
           <Text style={styles.textHeader}>Description</Text>
