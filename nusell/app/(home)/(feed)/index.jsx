@@ -88,7 +88,7 @@ export default function HomePage() {
 
   const CategoryList = () => {
     return (
-      <View style={{marginLeft: 5, marginVertical: 5}}>
+      <View style={{marginLeft: 5, marginVertical: 7}}>
         <FlatList
           data={categoryArr}
           renderItem={({item}) => <CategoryButton title={item} />}
@@ -110,7 +110,7 @@ export default function HomePage() {
         data={posts.filter((post) => {
           if (query === '') {
             return post;
-          } else if (post.description.toLowerCase().includes(query.toLowerCase())) {
+          } else if (post.title.toLowerCase().includes(query.toLowerCase())) {
             return post;
           }
           })}
@@ -123,8 +123,6 @@ export default function HomePage() {
     </View>
   );
 }
-
-
 
 // Function to render posts in the home feed.
 // Since yet to be able to set username and profile pics, defaulted to liNUS
