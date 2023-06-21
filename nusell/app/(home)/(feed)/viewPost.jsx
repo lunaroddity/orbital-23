@@ -46,6 +46,8 @@ export default function ViewPostPage() {
 function Post( props ) {
   const { id, username, title, description, price, category, condition } = props;
   const router = useRouter();
+
+  // TODO: link category to home page
   const handleCategoryPress = () => {
     console.log("category pressed");
   };
@@ -63,7 +65,15 @@ function Post( props ) {
           <Text style={styles.textHeader}>Description</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <Button onPress={handleCategoryPress}>{category}</Button>
+        <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
+          <Button
+            contentStyle={{marginHorizontal: 10}}
+            mode="contained"
+            textColor="#003D7C"
+            buttonColor='#ddd'
+            compact={true}
+            onPress={handleCategoryPress}>{category}</Button>
+        </View>
       </ScrollView>
     </View>
   );

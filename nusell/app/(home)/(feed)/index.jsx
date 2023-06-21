@@ -79,7 +79,15 @@ export default function HomePage() {
       setCategoryUpdated(true);
     }
   
-    return (<Button mode="contained" style={{backgroundColor: "#003D7C"}} onPress={handleCategoryPress}>{title}</Button>);
+    return (
+      <Button
+        mode="contained"
+        textColor="#003D7C"
+        buttonColor='#ddd'
+        compact={true}
+        contentStyle={{marginHorizontal: 10}}
+        onPress={handleCategoryPress}>{title}</Button>
+    );
   }
 
   const categoryArr = ["All", "Beauty & Personal Care", "Business Services", "Food & Drinks", "Furniture",
