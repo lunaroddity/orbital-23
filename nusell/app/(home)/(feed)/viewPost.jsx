@@ -1,8 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView } from "react-native";
-import { Text, Button } from "react-native-paper";
-import { useLocalSearchParams, Stack, useRouter } from "expo-router";
+import { Text, Button, ActivityIndicator } from "react-native-paper";
+import { useLocalSearchParams } from "expo-router";
 import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../../../contexts/auth";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-expo";
+import { chatClient } from "../../../lib/chatClient";
+import { useChatClient } from "../(chat)/useChatClient";
+import { useChat } from "../../../contexts/chat";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -10,6 +16,8 @@ export default function ViewPostPage() {
     const [post, setPost] = useState([]);
     const params = useLocalSearchParams();
     const { id } = params;
+    const { user } = useAuth();
+    const Stack = createStackNavigator();
 
     async function fetchPost() {
         let { data } = await supabase.from('posts').select('*').eq('id', id).single();
@@ -20,43 +28,106 @@ export default function ViewPostPage() {
     useEffect(() => {
         fetchPost();
     }, [id]);
+
+     // Unique users yet to be added, defaulted to liNUS for now.
+     const ChatScreen = () => {
+      // const { clientIsReady } = useChatClient();
+      // const { channel, setChannel } = useChat();
+
+      // if (!clientIsReady) {
+      //   return (
+      //     <View style={{flex: 1, justifyContent: 'center'}}>
+      //       <ActivityIndicator />
+      //     </View>
+      //   );
+      // }
+
+      // // Channel is being created but crashes the app
+      // const channelCreated = chatClient.channel('messaging', id, {
+      //   name: 'liNUS',
+      //   members: [post.user_id, user.id],
+      // });
+      // channelCreated.watch();
+      // setChannel(channelCreated);
+      const instructions ="To be added. Please click on the chat bubble icon. A chat called 'liNUS' has been created upon pressing the chat button. Feel free to send messages there."
+      
+      return (
+        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
+          <Text>{instructions}</Text>
+        </View>
+      );
+
+      // return (
+      //   <Channel channel={channel}>
+      //     <MessageList />
+      //     <MessageInput />
+      //   </Channel>
+      // );
+    }
+
+    const PostScreen = ( props ) => {
+      const { navigation } = props;
+      const handleChatPress = () => navigation.navigate('Chat');
+      const handleCategoryPress = () => navigation.navigate('Category');
+      return (
+        <Post
+          postId={id}
+          username="liNUS"
+          title={post.title}
+          description={post.description}
+          price={post.price}
+          category={post.category}
+          condition={post.condition}
+          handleChatPress={handleChatPress}
+          handleCategoryPress={handleCategoryPress}
+        />
+      );
+    }
+
+    const CategoryScreen = ( props ) => {
+      return (
+        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
+          <Text>Category screen to be added.</Text>
+        </View>
+      );
+    }
     
     return (
-        <View>
-            <Stack.Screen 
-                options={{
-                    headerStyle: { backgroundColor: '#003D7C'},
-                    headerTintColor: '#fff',
-                    headerTitle: "Post"
-                }}
+      <ChatProvider>
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name='Post'
+              options={{
+                headerStyle: { backgroundColor: '#003D7C'},
+                headerTintColor: '#fff',
+                headerTitle: "Post"
+              }}
+              component={PostScreen}
             />
-            <Post
-                id={id}
-                username="liNUS"
-                title={post.title}
-                description={post.description}
-                price={post.price}
-                category={post.category}
-                condition={post.condition}/>
+            <Stack.Screen
+              name='Chat'
+              component={ChatScreen} 
+            />
+            <Stack.Screen
+              name='Category'
+              component={CategoryScreen}
+            />
+          </Stack.Navigator>
         </View>
+      </ChatProvider>
     );
 }
 
 // Function creates the post for viewing.
 function Post( props ) {
-  const { id, username, title, description, price, category, condition } = props;
-  const router = useRouter();
-
-  // TODO: link category to home page
-  const handleCategoryPress = () => {
-    console.log("category pressed");
-  };
+  const { postId, username, title, description, price, category, condition, handleChatPress, handleCategoryPress } = props;
 
   return (
     <View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Header username={username} />
-        <ImageCarousel id={id} />
+        <ImageCarousel id={postId} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
         <View style={{marginVertical: 7}}>
@@ -73,6 +144,13 @@ function Post( props ) {
             buttonColor='#ddd'
             compact={true}
             onPress={handleCategoryPress}>{category}</Button>
+        </View>
+        <View style={{marginHorizontal: 20}}>
+          <Button
+            mode="contained"
+            buttonColor="#003D7C"
+            textColor="#fff"
+            onPress={handleChatPress}>Chat</Button>
         </View>
       </ScrollView>
     </View>
