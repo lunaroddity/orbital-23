@@ -16,6 +16,7 @@ const SearchBar = ({ query, setQuery }) => {
         backgroundColor="#fff"
         mode='flat'
         placeholder="Enter Search"
+        underlineColor='#000'
         onChangeText={(text) => setQuery(text)}
         value={query} />
     </View>
@@ -61,6 +62,7 @@ export default function HomePage() {
     }
   }, [refresh]);
 
+  // Post fetch for categories
   useEffect(() => {
     if (categoryUpdated) {
       if (category === "All"){
