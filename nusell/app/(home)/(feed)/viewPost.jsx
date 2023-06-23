@@ -46,6 +46,8 @@ export default function ViewPostPage() {
 function Post( props ) {
   const { id, username, title, description, price, category, condition } = props;
   const router = useRouter();
+
+  // TODO: link category to home page
   const handleCategoryPress = () => {
     console.log("category pressed");
   };
@@ -57,13 +59,21 @@ function Post( props ) {
         <ImageCarousel id={id} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
-        <View style={{marginVertical: 15}}>
+        <View style={{marginVertical: 7}}>
           <Text style={styles.textHeader}>Condition</Text>
           <Text style={styles.description}>{condition}</Text>
           <Text style={styles.textHeader}>Description</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <Button onPress={handleCategoryPress}>{category}</Button>
+        <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
+          <Button
+            contentStyle={{marginHorizontal: 10}}
+            mode="contained"
+            textColor="#003D7C"
+            buttonColor='#ddd'
+            compact={true}
+            onPress={handleCategoryPress}>{category}</Button>
+        </View>
       </ScrollView>
     </View>
   );
