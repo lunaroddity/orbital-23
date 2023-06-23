@@ -145,7 +145,7 @@ function Post( props ) {
             compact={true}
             onPress={handleCategoryPress}>{category}</Button>
         </View>
-        <View style={{marginHorizontal: 20}}>
+        <View style={{margin: 10}}>
           <Button
             mode="contained"
             buttonColor="#003D7C"
