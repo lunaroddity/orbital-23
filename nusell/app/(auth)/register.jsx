@@ -5,6 +5,9 @@ import { Text, TextInput, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
 export default function RegisterPage() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const[password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -49,8 +52,16 @@ export default function RegisterPage() {
             { 
                 email: email, 
                 password: password,
-                
-            })
+                options: { 
+                    data: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        username: username,
+                    }
+                }
+            }
+        )   
+        
 
         if (authError) {
             setErrMsg(authError.message);
@@ -73,6 +84,37 @@ export default function RegisterPage() {
     return (
         <View style = {styles.view}>
             <HeaderBar />
+
+             {/* FirstName input */}
+             <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='First Name'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                value={firstName}
+                onChangeText={setFirstName} />
+
+            {/* LastName input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Last Name'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                value={lastName}
+                onChangeText={setLastName} />
+
+            {/* Username input */}
+            <TextInput
+                style={styles.emailInput}
+                mode='outlined'
+                label='Username'
+                activeOutlineColor='#003D7C'
+                autoCapitalize='none'
+                textContentType='username'
+                value={username}
+                onChangeText={setUsername} />
 
             {/* Email input */}
             <TextInput
