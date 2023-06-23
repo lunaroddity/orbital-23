@@ -31,36 +31,38 @@ export default function ViewPostPage() {
 
      // Unique users yet to be added, defaulted to liNUS for now.
      const ChatScreen = () => {
+      // const { clientIsReady } = useChatClient();
+      // const { channel, setChannel } = useChat();
+
+      // if (!clientIsReady) {
+      //   return (
+      //     <View style={{flex: 1, justifyContent: 'center'}}>
+      //       <ActivityIndicator />
+      //     </View>
+      //   );
+      // }
+
+      // // Channel is being created but crashes the app
+      // const channelCreated = chatClient.channel('messaging', id, {
+      //   name: 'liNUS',
+      //   members: [post.user_id, user.id],
+      // });
+      // channelCreated.watch();
+      // setChannel(channelCreated);
+      const instructions ="To be added. Please click on the chat bubble icon. A chat called 'liNUS' has been created upon pressing the chat button. Feel free to send messages there."
+      
       return (
-        <View style={{flex: 1, justifyContent: 'center'}}>
-          <Text>Chat screen to be added.</Text>
+        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
+          <Text>{instructions}</Text>
         </View>
       );
-    //   const { clientIsReady } = useChatClient();
-    //   const { channel, setChannel } = useChat();
 
-    //   if (!clientIsReady) {
-    //     return (
-    //       <View style={{flex: 1, justifyContent: 'center'}}>
-    //         <ActivityIndicator />
-    //       </View>
-    //     );
-    //   }
-
-    //   const channelCreated = chatClient.channel('messaging', id, {
-    //     name: 'liNUS',
-    //     members: [post.user_id, user.id],
-    //   });
-    //   channelCreated.watch();
-    //   setChannel(channelCreated);
-
-      
-    //   return (
-    //     <Channel channel={channel}>
-    //       <MessageList />
-    //       <MessageInput />
-    //     </Channel>
-    //   );
+      // return (
+      //   <Channel channel={channel}>
+      //     <MessageList />
+      //     <MessageInput />
+      //   </Channel>
+      // );
     }
 
     const PostScreen = ( props ) => {
@@ -84,7 +86,7 @@ export default function ViewPostPage() {
 
     const CategoryScreen = ( props ) => {
       return (
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
           <Text>Category screen to be added.</Text>
         </View>
       );
