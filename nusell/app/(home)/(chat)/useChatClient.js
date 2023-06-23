@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
-import { chatClient } from '../../../lib/chatClient';
+import { chatApiKey } from '../../../lib/chatClient';
 import { useAuth } from '../../../contexts/auth';
 import { supabase } from '../../../lib/supabase';
 import JWT from 'expo-jwt';
+import { StreamChat } from 'stream-chat';
+
+const chatClient = StreamChat.getInstance(chatApiKey);
 
 export const useChatClient = () => {
   const [clientIsReady, setClientIsReady] = useState(false);
   const { user } = useAuth();
   console.log(`user: ${JSON.stringify(useAuth())}`)
+  const userDetails = {
+    id: user.id,
+  }
+  console.log(`user.id: ${user.id}`);
 
   useEffect(() => {
-    // liNUS is used as a placeholder for the username
-    const userDetails = {
-      id: user.id,
-      name: 'liNUS'
-    }
-    console.log(`user.id: ${user.id}`);
-
     const setupClient = async () => {
       const { data } = await supabase.auth.getSession();
       const key = process.env.JWT
@@ -40,7 +40,7 @@ export const useChatClient = () => {
     if (!chatClient.userID) {
       setupClient();
     }
-  }, [user.id]);
+  }, []);
 
   return {
     clientIsReady,
