@@ -3,34 +3,35 @@ import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../lib/supabase";
 import { chatClient } from "../../lib/chatClient";
 import { HeaderBar } from '../(auth)/_layout.jsx';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AuthProvider } from "../../contexts/auth";
 
 
 export default function ProfilePage() {
+    const router = useRouter();
     const handleLogout = () => {
         chatClient.disconnectUser();
         supabase.auth.signOut();
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 120 }}>
+        <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20 }}>
             <HeaderBar />
             <Header firstName="liNUS" lastName="lee" username="liNUSyay" />
             <Button
-                mode="contained"
-                buttonColor ="#003D7C"
-                rippleColor="#022E5B" 
-                onPress={handleLogout}>Logout</Button>
-            
-            <Link style={styles.registerButton} href="/forgotpw">
-                <Button 
-                mode="contained"
-                buttonColor ="#003D7C"
-                rippleColor="#022E5B" 
-                textColor='white'>{"Edit profile"}</Button>
-            </Link>
-
+              style={styles.button}
+              mode="contained"
+              buttonColor ="#003D7C"
+              rippleColor="#022E5B" 
+              compact={true}
+              onPress={handleLogout}>Logout</Button>            
+            <Button
+              style={styles.button}
+              mode="contained"
+              buttonColor ="#003D7C"
+              rippleColor="#022E5B" 
+              textColor='white'
+              onPress={() => router.push("/editProfile")}>Edit Profile</Button>
         </View>
     )
 }
@@ -86,6 +87,7 @@ function Avatar() {
       borderWidth: 2
     },
     headerContainer: {
+        marginVertical: 10,
         padding: 8,
         backgroundColor: 'white',
         borderWidth: 1,
@@ -99,6 +101,8 @@ function Avatar() {
     },
     name: {
         flexDirection: "row"
-    }
-
+    },
+    button: {
+      marginVertical: 10,
+    },
 });
