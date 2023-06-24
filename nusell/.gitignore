@@ -1,7 +1,4 @@
 node_modules/
-*.log
-.nvm
-package-lock.json
 .expo/
 dist/
 npm-debug.*
@@ -12,15 +9,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-android/.gradle/
-android/build/
-.idea
-*.iml
-local.properties
-.vs
-.vscode
-.gradle
-.env
+android
 eas.json
 
 # macOS

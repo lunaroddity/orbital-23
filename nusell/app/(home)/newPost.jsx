@@ -249,7 +249,7 @@ export default function NewPostPage() {
 
             {errMsg !== '' && <Text style={styles.errMsg}>{errMsg}</Text>}
             <Button
-                style={{marginVertical: 15}}
+                style={{marginVertical: 25}}
                 mode='contained'
                 buttonColor="#003D7C"
                 onPress={handleSubmit}>Upload</Button>
@@ -283,5 +283,5 @@ const styles = StyleSheet.create({
         marginTop: 15,
         backgroundColor: '#BF3E3E',
         color: '#FFFFFF'
-    },
+    }
 });
