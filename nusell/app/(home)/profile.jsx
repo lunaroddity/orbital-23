@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { Button } from 'react-native-paper';
 import { supabase } from "../../lib/supabase";
+import { chatClient } from "../../lib/chatClient";
 import { HeaderBar } from '../(auth)/_layout.jsx';
 
 
