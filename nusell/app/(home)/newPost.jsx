@@ -45,8 +45,18 @@ export default function NewPostPage() {
 
     // Handles the submission of the contents in a post.
     const handleSubmit = async () => {
+        if (selectedCategory === null) {
+            setErrMsg('Please choose a category.');
+            return;
+        }
+
         if (title === '') {
             setErrMsg('Title cannot be empty.');
+            return;
+        }
+
+        if (selectedCondition === null) {
+            setErrMsg('Please choose a condition.');
             return;
         }
 
@@ -57,6 +67,16 @@ export default function NewPostPage() {
 
         if (price === '') {
             setErrMsg('Price cannot be empty.');
+            return;
+        }
+
+        const checkPrice = (price) => {
+            let re = /^-?\d*\.?\d*$/;
+            return re.test(price);
+        };
+
+        if (!checkPrice(price)) {
+            setErrMsg('Price can only contain numbers');
             return;
         }
 
@@ -227,7 +247,7 @@ export default function NewPostPage() {
                 value={price}
                 onChangeText={setPrice} />
 
-            {errMsg !== '' && <Text>{errMsg}</Text>}
+            {errMsg !== '' && <Text style={styles.errMsg}>{errMsg}</Text>}
             <Button
                 style={{marginVertical: 15}}
                 mode='contained'
@@ -257,5 +277,11 @@ const styles = StyleSheet.create({
     image: {
         height: 200,
         width: 200,
+    },
+    errMsg: {
+        padding: 10,
+        marginTop: 15,
+        backgroundColor: '#BF3E3E',
+        color: '#FFFFFF'
     }
 });
