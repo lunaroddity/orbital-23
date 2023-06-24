@@ -92,9 +92,10 @@ export default function HomePage() {
     );
   }
 
-  const categoryArr = ["All", "Beauty & Personal Care", "Business Services", "Food & Drinks", "Furniture",
-      "Handicrafts", "Hobbies", "Home Appliances", "Learning & Enrichment", "Lifestyle Services", 
-      "Men's Fashion", "Technology", "Women's Fashion"];
+  const categoryArr = ["All", "Official Merchandise", "Fundraisers", "Beauty & Personal Care",
+      "Business Services", "Education", "Food & Drinks", "Furniture", "Handicrafts", "Hobbies",
+      "Home Appliances", "Lifestyle Services", "Men's Fashion", "Notes & Cheat Sheets",
+      "Technology", "Women's Fashion"];
 
   const CategoryList = () => {
     return (
