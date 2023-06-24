@@ -60,26 +60,6 @@ export default function NewPostPage() {
             return;
         }
 
-        const checkPrice = (price) => {
-            let re = /^-?\d*\.?\d*$/;
-            return re.test(price);
-        };
-
-        if (!checkPrice(price)) {
-            setErrMsg('Price can only contain numbers');
-            return;
-        }
-
-        if (selectedCategory === null) {
-            setErrMsg('Please choose a category.');
-            return;
-        }
-
-        if (selectedCondition === null) {
-            setErrMsg('Please choose a condition.');
-            return;
-        }
-
         setLoading(true);
         const postId = randomUUID();
         
@@ -247,7 +227,7 @@ export default function NewPostPage() {
                 value={price}
                 onChangeText={setPrice} />
 
-            {errMsg !== '' && <Text style={styles.errMsg}>{errMsg}</Text>}
+            {errMsg !== '' && <Text>{errMsg}</Text>}
             <Button
                 style={{marginVertical: 25}}
                 mode='contained'
@@ -277,11 +257,5 @@ const styles = StyleSheet.create({
     image: {
         height: 200,
         width: 200,
-    },
-    errMsg: {
-        padding: 10,
-        marginTop: 15,
-        backgroundColor: '#BF3E3E',
-        color: '#FFFFFF'
     }
 });
