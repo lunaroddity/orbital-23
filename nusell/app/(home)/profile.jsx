@@ -9,9 +9,9 @@ import { AuthProvider } from "../../contexts/auth";
 
 export default function ProfilePage() {
     const router = useRouter();
-    const handleLogout = () => {
-        chatClient.disconnectUser();
-        supabase.auth.signOut();
+    const handleLogout = async () => {
+        await chatClient.disconnectUser();
+        const { error } = await supabase.auth.signOut();
     };
 
     return (

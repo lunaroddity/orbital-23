@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { Text, TextInput, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
@@ -84,84 +84,86 @@ export default function RegisterPage() {
 
     return (
         <View style = {styles.view}>
-            <HeaderBar />
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <HeaderBar />
+                <Text style={{fontWeight: 'bold', fontSize: 20, marginVertical: 10}}>Registration</Text>
+                {/* FirstName input */}
+                <Text>First Name</Text>
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    autoCapitalize='none'
+                    value={firstName}
+                    onChangeText={setFirstName} />
 
-             {/* FirstName input */}
-             <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='First Name'
-                activeOutlineColor='#003D7C'
-                autoCapitalize='none'
-                value={firstName}
-                onChangeText={setFirstName} />
+                {/* LastName input */}
+                <Text>Last Name</Text>
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    autoCapitalize='none'
+                    value={lastName}
+                    onChangeText={setLastName} />
 
-            {/* LastName input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Last Name'
-                activeOutlineColor='#003D7C'
-                autoCapitalize='none'
-                value={lastName}
-                onChangeText={setLastName} />
+                {/* Username input */}
+                <Text>Username</Text>      
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    autoCapitalize='none'
+                    textContentType='username'
+                    value={username}
+                    onChangeText={setUsername} />
 
-            {/* Username input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Username'
-                activeOutlineColor='#003D7C'
-                autoCapitalize='none'
-                textContentType='username'
-                value={username}
-                onChangeText={setUsername} />
+                {/* Email input */}
+                <Text>Email</Text>
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    autoCapitalize='none'
+                    textContentType='emailAddress'
+                    value={email}
+                    onChangeText={setEmail} />
 
-            {/* Email input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Email'
-                activeOutlineColor='#003D7C'
-                autoCapitalize='none'
-                textContentType='emailAddress'
-                value={email}
-                onChangeText={setEmail} />
+                {/* Password input */}
+                <Text>Password</Text>
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    secureTextEntry
+                    autoCapitalize='none'
+                    textContentType='password'
+                    value={password}
+                    onChangeText={setPassword} />
 
-            {/* Password input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Password'
-                activeOutlineColor='#003D7C'
-                secureTextEntry
-                autoCapitalize='none'
-                textContentType='password'
-                value={password}
-                onChangeText={setPassword} />
+                {/* ConfirmPassword input */}
+                <Text>Confirm Password</Text>
+                <TextInput
+                    style={styles.emailInput}
+                    mode='outlined'
+                    activeOutlineColor='#003D7C'
+                    secureTextEntry
+                    autoCapitalize='none'
+                    textContentType='password'
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword} />
 
-            {/* ConfirmPassword input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Confirm Password'
-                activeOutlineColor='#003D7C'
-                secureTextEntry
-                autoCapitalize='none'
-                textContentType='password'
-                value={confirmPassword}
-                onChangeText={setConfirmPassword} />
+                {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
 
-            {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
-
-            <Button 
-                mode="contained"
-                buttonColor ="#003D7C"
-                rippleColor="#022E5B"
-                onPress={handleSubmit}>Register</Button>
-            
-            { /* Renders loading icon while data is uploading. */}
-            {loading && <ActivityIndicator />}
+                <Button 
+                    mode="contained"
+                    buttonColor ="#003D7C"
+                    rippleColor="#022E5B"
+                    onPress={handleSubmit}>Register</Button>
+                
+                { /* Renders loading icon while data is uploading. */}
+                {loading && <ActivityIndicator />}
+            </ScrollView>
         </View>
     )
 }

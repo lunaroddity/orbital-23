@@ -189,14 +189,15 @@ export default function NewPostPage() {
                         <Picker.Item label="Category of product" enabled={false} />
                         <Picker.Item label="Beauty & Personal Care" value="Beauty & Personal Care"/>
                         <Picker.Item label="Business Services" value="Business Services" />
+                        <Picker.Item label="Education" value="Education" />
                         <Picker.Item label="Food & Drinks" value="Food & Drinks"/>
                         <Picker.Item label="Furniture" value="Furniture"/>
                         <Picker.Item label="Handicrafts" value="Handicrafts" />
                         <Picker.Item label="Hobbies" value="Hobbies" />
                         <Picker.Item label="Home Appliances" value="Home Appliances" />
-                        <Picker.Item label="Learning & Enrichment" value="Learning & Enrichment" />
                         <Picker.Item label="Lifestyle Services" value="Lifestyle Services" />
                         <Picker.Item label="Men's Fashion" value="Men's Fashion" />
+                        <Picker.Item label="Notes & Cheat Sheets" value="Notes & Cheat Sheets" />
                         <Picker.Item label="Technology" value="Technology" />
                         <Picker.Item label="Women's Fashion" value="Women's Fashion" />
                         
