@@ -77,7 +77,7 @@ export default function LoginPage() {
             {loading && <ActivityIndicator />}
 
             <Link style={styles.registerButton} href="/forgotpw">
-                <Button textColor='#003D7C'>{"Forgot password?"}</Button>
+                <Button textColor='#003D7C'>{"Forgot your password?"}</Button>
             </Link>
             <Link style={styles.registerButton} href="/register">
                 <Button textColor='#003D7C'>{"Don't have an account? Register now!"}</Button>
