@@ -9,8 +9,8 @@ import { AuthProvider } from "../../contexts/auth";
 
 export default function ProfilePage() {
     const handleLogout = () => {
-        supabase.auth.signOut();
         chatClient.disconnectUser();
+        supabase.auth.signOut();
     };
 
     return (
