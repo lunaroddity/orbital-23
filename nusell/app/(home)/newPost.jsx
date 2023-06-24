@@ -249,7 +249,7 @@ export default function NewPostPage() {
 
             {errMsg !== '' && <Text style={styles.errMsg}>{errMsg}</Text>}
             <Button
-                style={{marginVertical: 25}}
+                style={{marginVertical: 15}}
                 mode='contained'
                 buttonColor="#003D7C"
                 onPress={handleSubmit}>Upload</Button>
