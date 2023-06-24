@@ -8,17 +8,11 @@ import { StreamChat } from "stream-chat";
 
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const disconnectChat = async () => {
-    const chatClient = StreamChat.getInstance(chatApiKey);
-    await chatClient.disconnectUser();
-    return;
-  }
-
-  const handleLogout = async () => {
-    await disconnectChat();
-    const { error } = await supabase.auth.signOut();
-  };
+    const router = useRouter();
+    const handleLogout = async () => {
+        await chatClient.disconnectUser();
+        const { error } = await supabase.auth.signOut();
+    };
 
   return (
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20 }}>
