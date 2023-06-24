@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { View, StyleSheet } from 'react-native';
-import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
+import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
 export default function RegisterPage() {
@@ -13,20 +13,9 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading , setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
-    
+
     const handleSubmit = async () => {
-        if (firstName === '') {
-            setErrMsg('First Name cannot be empty.');
-            return;
-        }
-        if (lastName === '') {
-            setErrMsg('Last Name cannot be empty.');
-            return;
-        }
-        if (username === '') {
-            setErrMsg('Username cannot be empty.');
-            return;
-        }
+       
         if (email === '') {
             setErrMsg('Email cannot be empty.');
             return;
@@ -57,28 +46,53 @@ export default function RegisterPage() {
             return;
         }
 
-
         setLoading(true); // Renders a spinning loading icon.
-        const { error } = supabase.auth.signUp({ email, password });
-        setLoading(false); // Stops rendering loading icon.
-        if (error) {
-            setErrMsg(error.message);
+        
+        const { data, error: authError } = await supabase.auth.signUp(
+            { 
+                email: email, 
+                password: password,
+                options: { 
+                    data: {
+                        first_name: firstName,
+                        last_name: lastName,
+                        username: username,
+                    }
+                }
+            }
+        )      
+
+        console.log(data);
+
+        if (authError) {
+            setErrMsg(authError.message);
             return;
-        }
+        } 
+
+        Alert.alert('Registration successful!', 'Check your email for confirmation', [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Handle the OK button press if needed
+              },
+            },
+          ]);
+
+        setLoading(false); // Stops rendering loading icon.        
+
     }
 
     return (
         <View style = {styles.view}>
             <HeaderBar />
 
-            {/* FirstName input */}
-            <TextInput
+             {/* FirstName input */}
+             <TextInput
                 style={styles.emailInput}
                 mode='outlined'
                 label='First Name'
                 activeOutlineColor='#003D7C'
                 autoCapitalize='none'
-                textContentType='emailAddress'
                 value={firstName}
                 onChangeText={setFirstName} />
 
@@ -89,7 +103,6 @@ export default function RegisterPage() {
                 label='Last Name'
                 activeOutlineColor='#003D7C'
                 autoCapitalize='none'
-                textContentType='emailAddress'
                 value={lastName}
                 onChangeText={setLastName} />
 
@@ -133,8 +146,9 @@ export default function RegisterPage() {
                 mode='outlined'
                 label='Confirm Password'
                 activeOutlineColor='#003D7C'
+                secureTextEntry
                 autoCapitalize='none'
-                textContentType='Confirm Password'
+                textContentType='password'
                 value={confirmPassword}
                 onChangeText={setConfirmPassword} />
 
@@ -171,5 +185,13 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         backgroundColor: '#BF3E3E',
         color: '#FFFFFF'
-    }
+    },
+    avatar: {
+        width: 70,
+        height: 70,
+        borderRadius: 50,
+        marginRight: 5,
+        borderColor: '#003D7C',
+        borderWidth: 2
+      },
 });
