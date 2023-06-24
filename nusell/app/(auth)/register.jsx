@@ -15,7 +15,21 @@ export default function RegisterPage() {
     const [errMsg, setErrMsg] = useState('');
 
     const handleSubmit = async () => {
+        if (firstName === '') {
+            setErrMsg('First Name cannot be empty.');
+            return;
+        }
+
+        if (lastName === '') {
+            setErrMsg('Last Name cannot be empty.');
+            return;
+        }
        
+        if (username === '') {
+            setErrMsg('Username cannot be empty.');
+            return;
+        }
+
         if (email === '') {
             setErrMsg('Email cannot be empty.');
             return;
