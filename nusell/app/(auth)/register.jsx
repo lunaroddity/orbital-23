@@ -88,30 +88,30 @@ export default function RegisterPage() {
                 <HeaderBar />
                 <Text style={{fontWeight: 'bold', fontSize: 20, marginVertical: 10}}>Registration</Text>
                 {/* FirstName input */}
-                <Text>First Name</Text>
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"First Name"}
                     activeOutlineColor='#003D7C'
                     autoCapitalize='none'
                     value={firstName}
                     onChangeText={setFirstName} />
 
                 {/* LastName input */}
-                <Text>Last Name</Text>
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"Last Name"}
                     activeOutlineColor='#003D7C'
                     autoCapitalize='none'
                     value={lastName}
                     onChangeText={setLastName} />
 
                 {/* Username input */}
-                <Text>Username</Text>      
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"Username"}
                     activeOutlineColor='#003D7C'
                     autoCapitalize='none'
                     textContentType='username'
@@ -119,10 +119,10 @@ export default function RegisterPage() {
                     onChangeText={setUsername} />
 
                 {/* Email input */}
-                <Text>Email</Text>
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"Email"}
                     activeOutlineColor='#003D7C'
                     autoCapitalize='none'
                     textContentType='emailAddress'
@@ -130,10 +130,10 @@ export default function RegisterPage() {
                     onChangeText={setEmail} />
 
                 {/* Password input */}
-                <Text>Password</Text>
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"Password"}
                     activeOutlineColor='#003D7C'
                     secureTextEntry
                     autoCapitalize='none'
@@ -142,10 +142,10 @@ export default function RegisterPage() {
                     onChangeText={setPassword} />
 
                 {/* ConfirmPassword input */}
-                <Text>Confirm Password</Text>
                 <TextInput
                     style={styles.emailInput}
                     mode='outlined'
+                    label={"Confirm Password"}
                     activeOutlineColor='#003D7C'
                     secureTextEntry
                     autoCapitalize='none'
