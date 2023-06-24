@@ -1,12 +1,17 @@
 import { View, Image, StyleSheet } from "react-native";
 import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../lib/supabase";
+import { chatClient } from "../../lib/chatClient";
 import { HeaderBar } from '../(auth)/_layout.jsx';
 import { Link } from 'expo-router';
 import { AuthProvider } from "../../contexts/auth";
 
 
 export default function ProfilePage() {
+    const handleLogout = () => {
+        supabase.auth.signOut();
+        chatClient.disconnectUser();
+    };
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 120 }}>
@@ -16,7 +21,7 @@ export default function ProfilePage() {
                 mode="contained"
                 buttonColor ="#003D7C"
                 rippleColor="#022E5B" 
-                onPress={() => supabase.auth.signOut()}>Logout</Button>
+                onPress={handleLogout}>Logout</Button>
             
             <Link style={styles.registerButton} href="/forgotpw">
                 <Button 
