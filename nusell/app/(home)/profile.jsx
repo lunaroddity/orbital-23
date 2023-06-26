@@ -1,39 +1,45 @@
 import { View, Image, StyleSheet } from "react-native";
 import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../lib/supabase";
-import { chatClient } from "../../lib/chatClient";
+import { chatApiKey } from "../../lib/chatClient";
 import { HeaderBar } from '../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
-import { AuthProvider } from "../../contexts/auth";
+import { StreamChat } from "stream-chat";
 
 
 export default function ProfilePage() {
-    const router = useRouter();
-    const handleLogout = async () => {
-        await chatClient.disconnectUser();
-        const { error } = await supabase.auth.signOut();
-    };
+  const router = useRouter();
+  const disconnectChat = async () => {
+    const chatClient = StreamChat.getInstance(chatApiKey);
+    await chatClient.disconnectUser();
+    return;
+  }
 
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20 }}>
-            <HeaderBar />
-            <Header firstName="liNUS" lastName="lee" username="liNUSyay" />
-            <Button
-              style={styles.button}
-              mode="contained"
-              buttonColor ="#003D7C"
-              rippleColor="#022E5B" 
-              compact={true}
-              onPress={handleLogout}>Logout</Button>            
-            <Button
-              style={styles.button}
-              mode="contained"
-              buttonColor ="#003D7C"
-              rippleColor="#022E5B" 
-              textColor='white'
-              onPress={() => router.push("/editProfile")}>Edit Profile</Button>
-        </View>
-    )
+  const handleLogout = async () => {
+    await disconnectChat();
+    const { error } = await supabase.auth.signOut();
+  };
+
+  return (
+      <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20 }}>
+          <HeaderBar />
+          <Header firstName="liNUS" lastName="lee" username="liNUSyay" />
+          <Button
+            style={styles.button}
+            mode="contained"
+            buttonColor ="#003D7C"
+            rippleColor="#022E5B" 
+            compact={true}
+            onPress={handleLogout}>Logout</Button>            
+          <Button
+            style={styles.button}
+            mode="contained"
+            buttonColor ="#003D7C"
+            rippleColor="#022E5B" 
+            textColor='white'
+            onPress={() => router.push("/editProfile")}>Edit Profile</Button>
+      </View>
+  )
 }
 
 function Avatar() {
