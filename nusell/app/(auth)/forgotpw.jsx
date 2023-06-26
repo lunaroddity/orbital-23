@@ -50,7 +50,7 @@ export default function ForgotPassword() {
     return (
         <View style = {styles.view}>
             <HeaderBar />
-
+            <Text style={{fontWeight: 'bold', fontSize: 20, marginVertical: 10}}>Forgot Password</Text>
             {/* Email input */}
             <TextInput
                 style={styles.emailInput}
