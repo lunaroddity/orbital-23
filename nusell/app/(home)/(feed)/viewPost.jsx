@@ -9,6 +9,8 @@ import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-ex
 import { chatClient } from "../../../lib/chatClient";
 import { useChatClient } from "../(chat)/useChatClient";
 import { useChat } from "../../../contexts/chat";
+import { Pressable } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -145,17 +147,36 @@ function Post( props ) {
             compact={true}
             onPress={handleCategoryPress}>{category}</Button>
         </View>
-        <View style={{margin: 10}}>
+        <View style={{margin: 10, flexDirection: 'row', flex: 1}}>
+          <View style={{flexGrow: 40, margin: 2}}>
           <Button
             mode="contained"
             buttonColor="#003D7C"
             textColor="#fff"
             onPress={handleChatPress}>Chat</Button>
+          </View>
+          <View style={{flexGrow: 1, margin: 5}}>
+          <LikeButton />
+          </View>
         </View>
       </ScrollView>
     </View>
   );
 }
+
+function LikeButton() {
+    const [liked, setLiked] = useState(false);
+
+    return (
+      <Pressable onPress={() => setLiked((isLiked) => !isLiked)}>
+        <MaterialCommunityIcons
+            name={liked ? "heart" : "heart-outline"}
+            size={32}
+            color={liked ? "red" : "black"}
+        />
+      </Pressable>
+    );
+  }
 
 // Function creates the header for the post.
 function Header({username}) {
