@@ -10,6 +10,7 @@ import 'react-native-get-random-values';
 import { randomUUID } from 'expo-crypto';
 import { Ionicons } from '../../node_modules/@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { useSyncDatabase } from "stream-chat-expo";
 
 export default function NewPostPage() {
     const [title, setTitle] = useState('');
@@ -20,6 +21,7 @@ export default function NewPostPage() {
     const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedCondition, setSelectedCondition] = useState(null);
+    const [liked, setLiked] = useState(null);
     const { user } = useAuth();
     const router = useRouter();
 
@@ -43,6 +45,8 @@ export default function NewPostPage() {
         console.log(`result: ${JSON.stringify(result)}`);
     }
 
+    setLiked(false);
+    
     // Handles the submission of the contents in a post.
     const handleSubmit = async () => {
         if (selectedCategory === null) {
@@ -93,7 +97,8 @@ export default function NewPostPage() {
             price: price,
             category: selectedCategory,
             condition: selectedCondition,
-            user_id: user.id})
+            user_id: user.id,
+            liked: liked})
         .select()
         .single();
 
