@@ -156,7 +156,7 @@ function Post( props ) {
             onPress={handleChatPress}>Chat</Button>
           </View>
           <View style={{flexGrow: 1, margin: 5}}>
-          <LikeButton />
+          <LikeButton id={postId} />
           </View>
         </View>
       </ScrollView>
@@ -164,19 +164,67 @@ function Post( props ) {
   );
 }
 
-function LikeButton() {
-    const [liked, setLiked] = useState(false);
+function LikeButton({ id }) {
+  const [liked, setLiked] = useState(false);
 
-    return (
-      <Pressable onPress={() => setLiked((isLiked) => !isLiked)}>
-        <MaterialCommunityIcons
-            name={liked ? "heart" : "heart-outline"}
-            size={32}
-            color={liked ? "red" : "black"}
-        />
-      </Pressable>
-    );
-  }
+  const fetchData = async () => {
+    try {
+
+      //retrieve one row of data and checks if contains curr post
+      const { userliked, userlikederror } = await supabase
+      .from('profiles')
+      .select('userid')
+      .limit(1)
+      .single()
+      .contains('likes', ['postId'])
+    
+      if (userlikederror) {
+        console.error('Error fetching liked state:', userlikederror);
+      } else {
+        if (userliked !== null) {
+          true;
+        } else {
+          false;
+        }
+      }
+    } catch (userlikederror) {
+      console.error('Error fetching liked state:', error);
+    }
+  };
+
+  const updateLikedState = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .update({ liked: !liked })
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error updating liked state:', error);
+      } else {
+        setLiked(!data);
+      }
+    } catch (error) {
+      console.error('Error updating liked state:', error);
+    }
+  };
+
+  const handleLikePress = async () => {
+    await updateLikedState();
+  };
+
+  return (
+    <Pressable onPress={handleLikePress}>
+      <MaterialCommunityIcons
+        name={fetchData ? 'heart' : 'heart-outline'}
+        size={32}
+        color={liked ? 'red' : 'black'}
+      />
+    </Pressable>
+  );
+}
+
 
 // Function creates the header for the post.
 function Header({username}) {
