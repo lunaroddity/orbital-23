@@ -38,6 +38,13 @@ export default function ProfilePage() {
             rippleColor="#022E5B" 
             textColor='white'
             onPress={() => router.push("/editProfile")}>Edit Profile</Button>
+            <Button
+            style={styles.button}
+            mode="contained"
+            buttonColor ="#003D7C"
+            rippleColor="#022E5B" 
+            textColor='white'
+            onPress={() => router.push("/(feed)/likePage")}>Likes</Button>
       </View>
   )
 }
