@@ -19,10 +19,11 @@ export const useChatClient = () => {
   useEffect(() => {
     const setupClient = async () => {
       const { data } = await supabase.auth.getSession();
+      console.log(`data: ${JSON.stringify(data)}`);
       const key = process.env.JWT
       const sessionData = JWT.decode(data.session.access_token, key);
-      const chatUserToken = JWT.encode({ user_id: user.id, ...sessionData }, key);
       console.log(`sessionData: ${JSON.stringify(sessionData)}`);
+      const chatUserToken = JWT.encode({ user_id: user.id, ...sessionData }, key);
       console.log(`token: ${JSON.stringify(chatUserToken)}`);
       
       try {
