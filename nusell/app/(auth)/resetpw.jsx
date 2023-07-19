@@ -1,36 +1,41 @@
-import { Link } from 'expo-router';
 import { useState } from 'react';
-import { View, StyleSheet } from "react-native";
-import { Text, Button, ActivityIndicator, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
+import { View, StyleSheet } from 'react-native';
+import { Text, TextInput, ActivityIndicator, Button } from 'react-native-paper';
 import { HeaderBar } from './_layout';
 
-export default function LoginPage() {
-    const [email, setEmail] = useState('');
+export default function ResetPassword() {
     const [password, setPassword] = useState('');
-    const [loading , setLoading] = useState(false);
-    const [errMsg, setErrMsg] = useState('');
-    
+    const[confirmPassword, setconfirmPassword] = useState('');
+    const [loading , setLoading] = useState(false); 
+    const [errMsg, setErrMsg] = useState('');2
+
     // Handles submission of user's email and password to supabase.
     const handleSubmit = async () => {
         setErrMsg('');
-        if (email === '') {
-            setErrMsg('Email cannot be empty.');
-            return;
-        }
-
-        if (!email.includes('@')) {
-            setErrMsg('Please use a valid email.');
-            return;
-        }
 
         if (password === '') {
             setErrMsg('Password cannot be empty.');
             return;
         }
 
+        if (password !== confirmPassword) {
+            setErrMsg('Passwords do not match.');
+            return;
+        }
+
+        if (password.length <= 8) {
+            setErrMsg('Password must have more than 8 characters.');
+            return;
+        }
+
         setLoading(true); // Renders a spinning loading icon.
-        const { error } = supabase.auth.signInWithPassword({ email, password }); 
+  
+        const { error } = await supabase.auth.updateUser({
+            password: "password",
+          })
+
+        
         setLoading(false); // Stops rendering loading icon.
         if (error) {
             setErrMsg(error.message);
@@ -42,17 +47,6 @@ export default function LoginPage() {
         <View style = {styles.view}>
             <HeaderBar />
 
-            {/* Email input */}
-            <TextInput
-                style={styles.emailInput}
-                mode='outlined'
-                label='Email'
-                activeOutlineColor='#003D7C'
-                autoCapitalize='none'
-                textContentType='emailAddress'
-                value={email}
-                onChangeText={setEmail} />
-            
             {/* Password input */}
             <TextInput
                 style={styles.passwordInput}
@@ -65,23 +59,29 @@ export default function LoginPage() {
                 value={password}
                 onChangeText={setPassword} />
 
+            {/* confirmPassword input */}
+            <TextInput
+                style={styles.passwordInput}
+                mode='outlined'
+                label='Confirm Password'
+                activeOutlineColor='#003D7C'
+                secureTextEntry
+                autoCapitalize='none'
+                textContentType='confirmPassword'
+                value={confirmPassword}
+                onChangeText={setconfirmPassword} />
+
             {errMsg !== "" && <Text style={styles.errMsg}>{errMsg}</Text>}
 
             <Button 
                 mode="contained"
                 buttonColor ="#003D7C"
                 rippleColor="#022E5B"
-                onPress={handleSubmit}>Login</Button>
+                onPress={handleSubmit}>Reset Password</Button>
 
             { /* Renders loading icon while data is uploading. */}
             {loading && <ActivityIndicator />}
 
-            <Link style={styles.registerButton} href="/forgotpw">
-                <Button textColor='#003D7C'>{"Forgot your password?"}</Button>
-            </Link>
-            <Link style={styles.registerButton} href="/register">
-                <Button textColor='#003D7C'>{"Don't have an account? Register now!"}</Button>
-            </Link>
         </View>
     );
 }

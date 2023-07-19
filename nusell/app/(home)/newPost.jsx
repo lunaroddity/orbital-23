@@ -45,8 +45,18 @@ export default function NewPostPage() {
 
     // Handles the submission of the contents in a post.
     const handleSubmit = async () => {
+        if (selectedCategory === null) {
+            setErrMsg('Please choose a category.');
+            return;
+        }
+
         if (title === '') {
             setErrMsg('Title cannot be empty.');
+            return;
+        }
+
+        if (selectedCondition === null) {
+            setErrMsg('Please choose a condition.');
             return;
         }
 
@@ -57,6 +67,16 @@ export default function NewPostPage() {
 
         if (price === '') {
             setErrMsg('Price cannot be empty.');
+            return;
+        }
+
+        const checkPrice = (price) => {
+            let re = /^-?\d*\.?\d*$/;
+            return re.test(price);
+        };
+
+        if (!checkPrice(price)) {
+            setErrMsg('Price can only contain numbers');
             return;
         }
 
@@ -169,14 +189,15 @@ export default function NewPostPage() {
                         <Picker.Item label="Category of product" enabled={false} />
                         <Picker.Item label="Beauty & Personal Care" value="Beauty & Personal Care"/>
                         <Picker.Item label="Business Services" value="Business Services" />
+                        <Picker.Item label="Education" value="Education" />
                         <Picker.Item label="Food & Drinks" value="Food & Drinks"/>
                         <Picker.Item label="Furniture" value="Furniture"/>
                         <Picker.Item label="Handicrafts" value="Handicrafts" />
                         <Picker.Item label="Hobbies" value="Hobbies" />
                         <Picker.Item label="Home Appliances" value="Home Appliances" />
-                        <Picker.Item label="Learning & Enrichment" value="Learning & Enrichment" />
                         <Picker.Item label="Lifestyle Services" value="Lifestyle Services" />
                         <Picker.Item label="Men's Fashion" value="Men's Fashion" />
+                        <Picker.Item label="Notes & Cheat Sheets" value="Notes & Cheat Sheets" />
                         <Picker.Item label="Technology" value="Technology" />
                         <Picker.Item label="Women's Fashion" value="Women's Fashion" />
                         
@@ -227,9 +248,9 @@ export default function NewPostPage() {
                 value={price}
                 onChangeText={setPrice} />
 
-            {errMsg !== '' && <Text>{errMsg}</Text>}
+            {errMsg !== '' && <Text style={styles.errMsg}>{errMsg}</Text>}
             <Button
-                style={{marginVertical: 25}}
+                style={{marginVertical: 15}}
                 mode='contained'
                 buttonColor="#003D7C"
                 onPress={handleSubmit}>Upload</Button>
@@ -257,5 +278,11 @@ const styles = StyleSheet.create({
     image: {
         height: 200,
         width: 200,
+    },
+    errMsg: {
+        padding: 10,
+        marginTop: 15,
+        backgroundColor: '#BF3E3E',
+        color: '#FFFFFF'
     }
 });
