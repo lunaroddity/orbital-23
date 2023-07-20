@@ -14,6 +14,7 @@ const { width, height } = Dimensions.get('screen');
 
 export default function ViewPostPage() {
     const [post, setPost] = useState([]);
+    const { clientIsReady } = useChatClient();
     const params = useLocalSearchParams();
     const { id } = params;
     const { user } = useAuth();
@@ -31,22 +32,23 @@ export default function ViewPostPage() {
 
      // Unique users yet to be added, defaulted to liNUS for now.
      const ChatScreen = () => {
-      // const { clientIsReady } = useChatClient();
       // const { channel, setChannel } = useChat();
 
-      // if (!clientIsReady) {
-      //   return (
-      //     <View style={{flex: 1, justifyContent: 'center'}}>
-      //       <ActivityIndicator />
-      //     </View>
-      //   );
-      // }
+      if (!clientIsReady) {
+        return (
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <ActivityIndicator />
+          </View>
+        );
+      }
 
-      // // Channel is being created but crashes the app
+      // Channel is being created but crashes the app
       // const channelCreated = chatClient.channel('messaging', id, {
       //   name: 'liNUS',
       //   members: [post.user_id, user.id],
       // });
+      // const wait = async () => await channelCreated.create();
+      // wait();
       // channelCreated.watch();
       // setChannel(channelCreated);
       const instructions ="To be added. Please click on the chat bubble icon. A chat called 'liNUS' has been created upon pressing the chat button. Feel free to send messages there."
