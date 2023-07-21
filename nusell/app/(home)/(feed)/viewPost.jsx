@@ -6,9 +6,10 @@ import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-expo";
-import { chatClient } from "../../../lib/chatClient";
+import { chatApiKey, chatClient } from "../../../lib/chatClient";
 import { useChatClient } from "../(chat)/useChatClient";
 import { useChat } from "../../../contexts/chat";
+import { StreamChat } from "stream-chat";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -17,6 +18,7 @@ export default function ViewPostPage() {
     const params = useLocalSearchParams();
     const { id } = params;
     const { user } = useAuth();
+    const { clientIsReady } = useChatClient();
     const Stack = createStackNavigator();
 
     async function fetchPost() {
@@ -31,24 +33,26 @@ export default function ViewPostPage() {
 
      // Unique users yet to be added, defaulted to liNUS for now.
      const ChatScreen = () => {
-      // const { clientIsReady } = useChatClient();
       // const { channel, setChannel } = useChat();
+      // const chatClient = StreamChat.getInstance(chatApiKey);
+      //   console.log("client ready? " + clientIsReady);
+      //   if (!clientIsReady) {
+      //     return (
+      //       <View style={{flex: 1, justifyContent: 'center'}}>
+      //         <ActivityIndicator />
+      //       </View>
+      //     );
+      //   }
 
-      // if (!clientIsReady) {
-      //   return (
-      //     <View style={{flex: 1, justifyContent: 'center'}}>
-      //       <ActivityIndicator />
-      //     </View>
-      //   );
-      // }
-
-      // // Channel is being created but crashes the app
-      // const channelCreated = chatClient.channel('messaging', id, {
-      //   name: 'liNUS',
-      //   members: [post.user_id, user.id],
-      // });
-      // channelCreated.watch();
-      // setChannel(channelCreated);
+      //   // Channel is being created but crashes the app
+      //   const channelCreated = chatClient.channel('messaging', id, {
+      //     name: 'liNUS',
+      //     created_by_id: post.user_id,
+      //     members: [post.user_id, user.id],
+      //   });
+      //   channelCreated.create();
+      //   setChannel(channelCreated);
+      //   console.log(`channel: ${JSON.stringify(channel)}`);
       const instructions ="To be added. Please click on the chat bubble icon. A chat called 'liNUS' has been created upon pressing the chat button. Feel free to send messages there."
       
       return (
@@ -67,7 +71,9 @@ export default function ViewPostPage() {
 
     const PostScreen = ( props ) => {
       const { navigation } = props;
-      const handleChatPress = () => navigation.navigate('Chat');
+      const handleChatPress = () => {
+        navigation.navigate('Chat');
+      }
       const handleCategoryPress = () => navigation.navigate('Category');
       return (
         <Post

@@ -43,6 +43,7 @@ export const useChatClient = () => {
     }
   }, []);
 
+  console.log("useChatClient client ready? " + clientIsReady);
   return {
     clientIsReady,
   };
