@@ -13,10 +13,7 @@ export default function LikePage() {
   const [refresh, setRefresh] = useState(false);
 
   async function fetchPosts() {
-    let { data } = await supabase
-        .from('posts')
-        .select('*')
-        .order('inserted_at', { ascending: false });
+    let { data } = await supabase.from('likes').select('*').eq('id', id).single();
     setPosts(data);
     setRefresh(false);
   }

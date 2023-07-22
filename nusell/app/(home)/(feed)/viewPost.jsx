@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView } from "react-native";
 import { Text, Button, ActivityIndicator } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
@@ -164,47 +164,43 @@ function Post( props ) {
   );
 }
 
-function LikeButton({ id }) {
+function LikeButton({ postId }) {
   const [liked, setLiked] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
+      // Check if the post is liked
+      const { data, error } = await supabase
+        .from('likes')
+        .select()
+        .eq('likedposts', postId);
 
-      //retrieve one row of data and checks if contains curr post
-      const { userliked, userlikederror } = await supabase
-      .from('profiles')
-      .select('userid')
-      .limit(1)
-      .single()
-      .contains('likes', ['postId'])
-    
-      if (userlikederror) {
-        console.error('Error fetching liked state:', userlikederror);
+      if (error) {
+        console.error('Error fetching liked state:', error);
+        return false;
       } else {
-        if (userliked !== null) {
-          true;
-        } else {
-          false;
-        }
+        return data !== null; // Return true if the data exists (liked), otherwise false.
       }
-    } catch (userlikederror) {
+    } catch (error) {
       console.error('Error fetching liked state:', error);
+      return false;
     }
-  };
+  }, [postId]);
+
+  useEffect(() => {
+    fetchData().then((isLiked) => {
+      setLiked(isLiked);
+    });
+  }, [postId, fetchData]); // Fetch and set liked state whenever the 'id' prop changes
 
   const updateLikedState = async () => {
     try {
-      const { data, error } = await supabase
-        .from('posts')
-        .update({ liked: !liked })
-        .eq('id', id)
+      await supabase
+        .from('likes')
+        .update({ likedposts: !liked })
+        .eq('id', postId)
         .single();
-
-      if (error) {
-        console.error('Error updating liked state:', error);
-      } else {
-        setLiked(!data);
-      }
+      setLiked(!liked);
     } catch (error) {
       console.error('Error updating liked state:', error);
     }
@@ -217,7 +213,7 @@ function LikeButton({ id }) {
   return (
     <Pressable onPress={handleLikePress}>
       <MaterialCommunityIcons
-        name={fetchData ? 'heart' : 'heart-outline'}
+        name={liked ? 'heart' : 'heart-outline'}
         size={32}
         color={liked ? 'red' : 'black'}
       />
