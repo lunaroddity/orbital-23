@@ -21,9 +21,10 @@ export default function ViewPostPage() {
     const Stack = createStackNavigator();
 
     async function fetchPost() {
-        let { data } = await supabase.from('posts').select('*').eq('id', id).single();
-        setPost(data);
-        console.log("data.id: " + data.id);
+      let { data } = await supabase.from('posts').select('*').eq('id', id).single();
+      setPost(data);
+      console.log("data.id: " + data.id);
+      console.log(`post: ${JSON.stringify(post)}`);
     }
 
     useEffect(() => {
