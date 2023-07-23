@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { HeaderBar } from './_layout';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading , setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('');
@@ -14,12 +14,12 @@ export default function LoginPage() {
     // Handles submission of user's email and password to supabase.
     const handleSubmit = async () => {
         setErrMsg('');
-        if (email === '') {
+        if (username === '') {
             setErrMsg('Email cannot be empty.');
             return;
         }
 
-        if (!email.includes('@')) {
+        if (!username.includes('@')) {
             setErrMsg('Please use a valid email.');
             return;
         }
@@ -42,16 +42,16 @@ export default function LoginPage() {
         <View style = {styles.view}>
             <HeaderBar />
 
-            {/* Email input */}
+            {/* Username input */}
             <TextInput
                 style={styles.emailInput}
                 mode='outlined'
-                label='Email'
+                label='Username'
                 activeOutlineColor='#003D7C'
                 autoCapitalize='none'
                 textContentType='emailAddress'
-                value={email}
-                onChangeText={setEmail} />
+                value={username}
+                onChangeText={setUsername} />
             
             {/* Password input */}
             <TextInput
@@ -77,7 +77,7 @@ export default function LoginPage() {
             {loading && <ActivityIndicator />}
 
             <Link style={styles.registerButton} href="/usernamelogin">
-                <Button textColor='#003D7C'>{"Log in with username"}</Button>
+                <Button textColor='#003D7C'>{"Log in with email"}</Button>
             </Link>
             <Link style={styles.registerButton} href="/forgotpw">
                 <Button textColor='#003D7C'>{"Forgot your password?"}</Button>
