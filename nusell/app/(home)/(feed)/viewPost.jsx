@@ -169,37 +169,39 @@ function LikeButton({ postId }) {
   const { user } = useAuth();
   const userId = user.id;
   const [liked, setLiked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
-      // Obtain likes array of user
+      
       const { data, error } = await supabase
         .from('likes')
         .select('likedposts')
-        .eq('id ', userId);
+        .eq('id', userId)
+        .single();
 
       if (error) {
         console.error('Error fetching liked state:', error);
-        return false;
-      } else {
-        // Check if the data exists and the 'likedposts' field is an array
-        if (data && Array.isArray(data.likedposts)) {
-          return data.likedposts.includes(postId);
-        } else {
-          return false;
-        }
+        setLoading(false);
+        return;
       }
+
+      // Check if the data exists and the 'likedposts' field is an array
+      if (data && Array.isArray(data.likedposts)) {
+        setLiked(data.likedposts.includes(postId));
+      }
+
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching liked state:', error);
-      return false;
+      setLoading(false);
     }
-  }, [userId, postId]);
+  };
 
   useEffect(() => {
-    fetchData().then((isLiked) => {
-      setLiked(isLiked);
-    });
-  }, [postId, fetchData]); // Fetch and set liked state whenever the 'id' prop changes
+    setLoading(true);
+    fetchData();
+  }, [postId]);
 
   const updateLikedState = async () => {
     try {
@@ -210,42 +212,35 @@ function LikeButton({ postId }) {
         .single();
 
       const existingLikedPosts = data !== null ? data.likedposts : [];
-      
-  
+
       // Check if the postId is already in the 'likedposts' array
       const isLiked = existingLikedPosts.includes(postId);
-  
+
+      let updatedLikedPosts = [];
       if (isLiked) {
-        // If already liked, remove the postId from the array
-        const updatedLikedPosts = existingLikedPosts.filter((value) => value !== postId);
-  
-        // Update the 'likedposts' array in the database
-        await supabase
-          .from('likes')
-          .update({ likedposts: updatedLikedPosts })
-          .eq('id', userId)
-          .single();
+        updatedLikedPosts = existingLikedPosts.filter((value) => value !== postId);
       } else {
         // If not liked, add the postId to the array
-        const updatedLikedPosts = [...existingLikedPosts, postId];
-  
-        // Update the 'likedposts' array in the database
-        await supabase
+        updatedLikedPosts = [...existingLikedPosts, postId];
+      }
+      await supabase
           .from('likes')
           .update({ likedposts: updatedLikedPosts })
           .eq('id', userId)
           .single();
-      }
-  
       // Update the 'liked' state in the component
-      setLiked(!isLiked);
+      setLiked(!liked);
     } catch (error) {
       console.error('Error updating liked state:', error);
     }
   };
-  
+
   const handleLikePress = async () => {
-    await updateLikedState();
+    if (!loading) {
+      setLoading(true); // Prevent additional updates while fetching/updating state
+      await updateLikedState();
+      setLoading(false);
+    }
   };
 
   return (
@@ -258,6 +253,7 @@ function LikeButton({ postId }) {
     </Pressable>
   );
 }
+
 
 
 // Function creates the header for the post.
