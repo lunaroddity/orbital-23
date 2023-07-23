@@ -14,6 +14,7 @@ const { width, height } = Dimensions.get('screen');
 
 export default function ViewPostPage() {
     const [post, setPost] = useState([]);
+    const [posterInfo, setPosterInfo] = useState([]);
     const { clientIsReady } = useChatClient();
     const params = useLocalSearchParams();
     const { id } = params;
@@ -21,10 +22,12 @@ export default function ViewPostPage() {
     const Stack = createStackNavigator();
 
     async function fetchPost() {
-      let { data } = await supabase.from('posts').select('*').eq('id', id).single();
-      setPost(data);
-      console.log("data.id: " + data.id);
-      console.log(`post: ${JSON.stringify(post)}`);
+      let { data: postData } = await supabase.from('posts').select('*').eq('id', id).single();
+      setPost(postData);
+      let { data: posterData } = await supabase.from('profiles').select('*').eq('id', postData.user_id).single();
+      setPosterInfo(posterData);
+      console.log(`postData: ${JSON.stringify(postData)}`);
+      console.log(`posterData: ${JSON.stringify(posterData)}`);
     }
 
     useEffect(() => {
@@ -75,7 +78,8 @@ export default function ViewPostPage() {
       return (
         <Post
           postId={id}
-          username="liNUS"
+          username={posterInfo.username}
+          avatar={posterInfo.avatar}
           title={post.title}
           description={post.description}
           price={post.price}
@@ -124,12 +128,12 @@ export default function ViewPostPage() {
 
 // Function creates the post for viewing.
 function Post( props ) {
-  const { postId, username, title, description, price, category, condition, handleChatPress, handleCategoryPress } = props;
+  const { postId, username, avatar, title, description, price, category, condition, handleChatPress, handleCategoryPress } = props;
 
   return (
     <View style={styles.view}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Header username={username} />
+        <Header username={username} avatar={avatar} />
         <ImageCarousel id={postId} />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
@@ -161,22 +165,22 @@ function Post( props ) {
 }
 
 // Function creates the header for the post.
-function Header({username}) {
+function Header({username, avatar}) {
   return (
     <View style={styles.headerContainer}>
-      <Avatar />
+      <Avatar avatar={avatar} />
       <Text style={styles.username}>{username}</Text>
     </View>
   );
   }
 
   // Function creates the avatar for the header.
-  function Avatar() {
+  function Avatar({ avatar }) {
     return (
       <View style={styles.avatarContainer}>
         <Image 
         style={styles.avatar}
-        source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+        source={{ uri: avatar }} />
       </View>
     );
   }

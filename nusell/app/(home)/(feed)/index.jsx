@@ -139,13 +139,28 @@ export default function HomePage() {
 // Since yet to be able to set username and profile pics, defaulted to liNUS
 function PostItem({ post }) {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const fetchPosterInfo = async () => {
+    let { data } = await supabase.from('profiles').select('*').eq('id', post.user_id).single();
+    setUsername(data.username);
+    setAvatar(data.avatar);
+  }
+
+  useEffect(() => {
+    fetchPosterInfo();
+  }, [post]);
+
     return (
       <View>
         <TouchableHighlight 
-          onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
+          onPress={() => {
+            router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
+          }
         }>
           <Post
-            username="liNUS"
+            username={username}
+            avatar={avatar}
             image={post.image_url}
             title={post.title}
             price={post.price} />
@@ -155,10 +170,10 @@ function PostItem({ post }) {
 }
      
 export function Post( props ) {
-  const { username, image, title, price } = props;
+  const { username, avatar, image, title, price } = props;
   return (
     <View style={styles.postContainer}>
-      <Header username={username} />
+      <Header username={username} avatar={avatar} />
       <Image style={styles.postImage} source={{ uri: image }} />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.price}>${price}</Text>
@@ -166,21 +181,21 @@ export function Post( props ) {
   );
 }
 
-function Header({username}) {
+function Header({username, avatar}) {
   return (
     <View style={styles.headerContainer}>
-      <Avatar />
+      <Avatar avatar={avatar} />
       <Text>{username}</Text>
     </View>
   );
 }
 
-function Avatar() {
+function Avatar({avatar}) {
   return (
     <View style={styles.avatarContainer}>
       <Image 
       style={styles.avatar}
-      source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+      source={{ uri: avatar }} />
     </View>
   );
 }

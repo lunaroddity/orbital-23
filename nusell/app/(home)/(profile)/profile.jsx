@@ -21,12 +21,7 @@ export default function ProfilePage() {
   async function fetchProfile() {
     let { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     console.log(`profileData: ${JSON.stringify(data)}`);
-
-    if (data.avatar !== null) {
-      setAvatar(data.avatar);
-    } else {
-      setAvatar("https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg");
-    }
+    setAvatar(data.avatar);
     setProfile(data);
   }
 
