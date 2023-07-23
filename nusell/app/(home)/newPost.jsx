@@ -106,9 +106,9 @@ export default function NewPostPage() {
                 // Upload image to storage in supabase.
                 const imageName = randomUUID();
                 const { data: imageUploadData, error: imageUploadError } = await supabase
-                .storage
-                .from('images')
-                .upload(imageName, { uri: images[i], type: 'jpg', name: 'name' }); 
+                    .storage
+                    .from('images')
+                    .upload(imageName, { uri: images[i], type: 'jpg', name: 'name' }); 
 
                 console.log('i: ' + i);
                 console.log(`imageUploadData: ${JSON.stringify(imageUploadData)}`);
@@ -160,7 +160,9 @@ export default function NewPostPage() {
 
     const addImageButton = () => {
         return (
-            <Pressable onPress={handleAddImage}><Ionicons name='add-circle-outline' size={60} /></Pressable>
+            <Pressable onPress={handleAddImage}>
+                <Ionicons name='add-circle-outline' size={60} />
+            </Pressable>
         );
     }
 

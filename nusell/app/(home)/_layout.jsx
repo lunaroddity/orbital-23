@@ -31,8 +31,7 @@ export default function HomeLayout() {
             <Tabs.Screen name="(feed)" options={{ tabBarIcon: homeIcon, tabBarShowLabel: false, headerShown: false }} />
             <Tabs.Screen name="newPost" options={{ tabBarIcon: newPostIcon, tabBarShowLabel: false, unmountOnBlur: true}} />
             <Tabs.Screen name="(chat)/chat" options={{ tabBarIcon: chatIcon, tabBarShowLabel: false, headerShown: false }} />
-            <Tabs.Screen name="profile" options={{ tabBarIcon: profileIcon, tabBarShowLabel: false, }} />
-            <Tabs.Screen name="editProfile" options={{ tabBarShowLabel: false, href: null }} />
+            <Tabs.Screen name="(profile)" options={{ tabBarIcon: profileIcon, tabBarShowLabel: false, headerShown: false}} />
         </Tabs>
     );
 }
