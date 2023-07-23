@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Button, ActivityIndicator, TextInput } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
 import { HeaderBar } from './_layout';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
@@ -15,28 +16,34 @@ export default function LoginPage() {
     const handleSubmit = async () => {
         setErrMsg('');
         if (username === '') {
-            setErrMsg('Email cannot be empty.');
+            setErrMsg('Username cannot be empty.');
             return;
         }
-
-        if (!username.includes('@')) {
-            setErrMsg('Please use a valid email.');
-            return;
-        }
-
+    
         if (password === '') {
             setErrMsg('Password cannot be empty.');
             return;
         }
-
+    
         setLoading(true); // Renders a spinning loading icon.
-        const { error } = supabase.auth.signInWithPassword({ email, password }); 
+        const { email, emailerror } = await supabase.from('profiles').select('email').eq('username', username).single();
+    
+            if (emailerror || !email) {
+                setErrMsg('No such user found');
+                setLoading(false);
+                return;
+            }
+    
+            const { signinerror } = await supabase.auth.signInWithPassword({ email, password });
+    
+            if (signinerror) {
+                setErrMsg(signinerror.message);
+                return;
+            } 
+
         setLoading(false); // Stops rendering loading icon.
-        if (error) {
-            setErrMsg(error.message);
-            return;
         }
-    }
+    
 
     return (
         <View style = {styles.view}>
