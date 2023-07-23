@@ -160,7 +160,9 @@ export default function NewPostPage() {
 
     const addImageButton = () => {
         return (
-            <Pressable onPress={handleAddImage}><Ionicons name='add-circle-outline' size={60} /></Pressable>
+            <Pressable onPress={handleAddImage}>
+                <Ionicons name='add-circle-outline' size={60} />
+            </Pressable>
         );
     }
 

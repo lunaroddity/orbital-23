@@ -1,129 +1,205 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, FlatList,  Dimensions } from "react-native";
 import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../../lib/supabase";
 import { HeaderBar } from '../../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
 import { useAuth } from "../../../contexts/auth";
 import { useEffect, useState } from "react";
+import { TouchableHighlight } from "react-native";
 
+const { width, height } = Dimensions.get('screen');
+const halfWidth = width / 2;
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [avatar, setAvatar] = useState('');
   const router = useRouter();
   const { user } = useAuth();
 
   async function fetchProfile() {
     let { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     console.log(`profileData: ${JSON.stringify(data)}`);
+
+    if (data.avatar !== null) {
+      setAvatar(data.avatar);
+    } else {
+      setAvatar("https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg");
+    }
     setProfile(data);
   }
 
-  useEffect(() => {
+  async function fetchPosts() {
+    let { data } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('inserted_at', { ascending: false });
+    setPosts(data);
+  }
+
+  // Initial data fetch on loading
+  useEffect(() => {  
     fetchProfile();
+    fetchPosts();
   }, []);
 
+  // Data fetch upon pull to refresh
+  useEffect(() => {
+    if (refresh) {
+      fetchProfile();
+      fetchPosts();
+      setRefresh(false);
+    }
+  }, [refresh]);
+
+  const oldAvatar = encodeURIComponent(avatar);
+
   return (
-      <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 20 }}>
-          <HeaderBar />
-          <Header 
-            firstName={profile.firstName}
-            lastName={profile.lastName}
-            username={profile.username}
-          />          
-          <Button
-            style={styles.button}
-            mode="contained"
-            buttonColor ="#003D7C"
-            rippleColor="#022E5B" 
-            textColor='white'
-            onPress={() => router.push("/editProfile")}>Edit Profile</Button>
+      <View style={styles.view}>
+        <HeaderBar />
+        <Header 
+          firstName={profile.firstName}
+          lastName={profile.lastName}
+          username={profile.username}
+          avatar={avatar}
+        />          
+        <Button
+          style={styles.button}
+          mode="outlined"
+          outlineColor ="#003D7C"
+          rippleColor="#ccc" 
+          textColor='black'
+          onPress={() => {
+            router.push({pathname: "(profile)/editProfile",
+              params: { 
+                oldFirstName: profile.firstName,
+                oldLastName: profile.lastName,
+                oldUsername: profile.username,
+                oldAvatar: oldAvatar}})}}>Edit Profile</Button>
+        <FlatList 
+          data={posts}
+          numColumns={2}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <PostItem post={item} />}
+          refreshing={refresh}
+          onRefresh={() => setRefresh(true)}
+        />
       </View>
   )
 }
 
 function Header(props) {
-  const { firstName, lastName, username } = props;
+  const { firstName, lastName, username, avatar } = props;
   return (
     <View style={styles.headerContainer}>
-      <UsernameAvatar username={username} />
+      <UsernameAvatar username={username} avatar={avatar} />
       <Name firstName={firstName} lastName={lastName} />
     </View>
   );
 }
 
 function UsernameAvatar(props) {
-  const { username } = props;
+  const { username, avatar } = props;
   return (
       <View style={styles.usernameAvatar}>
-          <Avatar />
-          <Text>{username}</Text>
+          <Avatar avatar={avatar} />
+          <Text style={styles.username}>{username}</Text>
       </View>
   )
 }
 
-function Avatar() {
-  const [avatar, setAvatar] = useState('');
-  const { user } = useAuth();
-    async function fetchAvatar() {
-      let { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-      console.log(`profileData: ${JSON.stringify(data)}`);
-      if (data.profilePicture !== null) {
-        setAvatar(data.profilePicture);
-      } else {
-        setAvatar("https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg");
-      }
-    }
-
-    useEffect(() => {
-      fetchAvatar();
-    }, []);
+export function Avatar(props) {
+  const { avatar } = props;
 
     return (
-      <View style={styles.avatarContainer}>
+      <View>
         <Image 
-        style={styles.avatar}
-        source={{ uri: avatar }} />
+          style={styles.avatar}
+          source={{ uri: avatar }} />
       </View>
     );
   }
 
   function Name(props) {
     const { firstName, lastName } = props;
+    const name = firstName + " " + lastName;
+
     return (
         <View style={styles.name}>
-            <Text>{firstName}</Text>
-            <Text>{lastName}</Text>
+          <Text style={{ fontSize: 14 }}>{name}</Text>
         </View>
     )
   }
 
+  function PostItem({ post }) {
+    const router = useRouter();
+      return (
+        <View>
+          <TouchableHighlight 
+            onPress={() => router.push({ pathname: "(profile)/viewPost", params: { id: post.id }})
+          }>
+            <View style={styles.postContainer}>
+              <Image style={styles.postImage} source={{ uri: post.image_url }} />
+              <Text style={styles.title}>{post.title}</Text>
+              <Text style={styles.price}>${post.price}</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+      );
+  }
+
   export const styles = StyleSheet.create({
-    avatarContainer: { backgroundColor: 'white' },
+    view: {
+      flex: 1,
+      justifyContent: 'flex-start',
+      backgroundColor: "#fff"
+    },
     avatar: {
       width: 60,
       height: 60,
       borderRadius: 50,
-      marginRight: 5,
-      borderColor: '#003D7C',
-      borderWidth: 2
     },
     headerContainer: {
-        marginVertical: 10,
+        marginTop: 10,
         padding: 8,
         backgroundColor: 'white',
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: 'black',
-        flexBasis: 'auto'
+        marginHorizontal: 10,
     },
     usernameAvatar: {
         flexDirection: "row",
         alignItems: 'center',
     },
+    username: {
+      marginLeft: 5,
+      fontWeight: "bold",
+      fontSize: 20
+    },
     name: {
-        flexDirection: "row"
+        flexDirection: "row",
+        marginVertical: 5,
     },
     button: {
-      marginVertical: 10,
+      marginHorizontal: 10,
+      marginBottom: 5,
     },
+    postImage: {
+      width: 160,
+      height: 160,
+    },
+     title: {
+      paddingHorizontal: 5,
+      paddingVertical: 3,
+      fontWeight: 'bold',
+    },
+    price: {
+      paddingHorizontal: 5,
+    },
+    postContainer: {
+      width: halfWidth,
+      alignItems: 'flex-start',
+      backgroundColor: 'white',
+      padding: 10,
+    }
 });
