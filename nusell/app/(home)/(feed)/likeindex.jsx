@@ -13,7 +13,18 @@ export default function LikePage() {
   const [refresh, setRefresh] = useState(false);
 
   async function fetchPosts() {
-    let { data } = await supabase.from('likes').select('*').eq('id', id).single();
+    //let { data } = await supabase.from('likes').select('*').eq('id', id).single();
+    const { data, error } = await supabase
+  .from('likes')
+  .select('likedposts')
+  .eq('id', userId);
+
+if (error) {
+  // Handle the error
+} else {
+  const likedPostsArray = data.map((row) => row.likedposts);
+  console.log(likedPostsArray); // Array of arrays containing likedposts UUIDs
+}
     setPosts(data);
     setRefresh(false);
   }
