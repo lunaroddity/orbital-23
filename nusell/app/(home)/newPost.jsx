@@ -82,6 +82,8 @@ export default function NewPostPage() {
 
         setLoading(true);
         const postId = randomUUID();
+
+        const { data: userData } = await supabase.from('profiles').select('username, avatar').eq('id', user.id).single();
         
         // Uploads contents of new post to posts database and retrieves the post as a single object.
         const { data: postInsertData, error: postInsertError } = await supabase
@@ -93,7 +95,9 @@ export default function NewPostPage() {
             price: price,
             category: selectedCategory,
             condition: selectedCondition,
-            user_id: user.id})
+            user_id: user.id,
+            username: userData.username,
+            avatar: userData.avatar})
         .select()
         .single();
 

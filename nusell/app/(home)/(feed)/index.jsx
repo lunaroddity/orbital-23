@@ -139,17 +139,6 @@ export default function HomePage() {
 // Since yet to be able to set username and profile pics, defaulted to liNUS
 function PostItem({ post }) {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [avatar, setAvatar] = useState('');
-  const fetchPosterInfo = async () => {
-    let { data } = await supabase.from('profiles').select('*').eq('id', post.user_id).single();
-    setUsername(data.username);
-    setAvatar(data.avatar);
-  }
-
-  useEffect(() => {
-    fetchPosterInfo();
-  }, [post]);
 
     return (
       <View>
@@ -159,8 +148,8 @@ function PostItem({ post }) {
           }
         }>
           <Post
-            username={username}
-            avatar={avatar}
+            username={post.username}
+            avatar={post.avatar}
             image={post.image_url}
             title={post.title}
             price={post.price} />
