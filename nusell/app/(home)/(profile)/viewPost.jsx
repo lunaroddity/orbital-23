@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView } from "react-native";
-import { Text, Button, ActivityIndicator } from "react-native-paper";
-import { useLocalSearchParams } from "expo-router";
+import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, Pressable, RefreshControl, Alert } from "react-native";
+import { Text, Button, ActivityIndicator, Menu, Divider } from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,11 +9,13 @@ import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-ex
 import { chatClient } from "../../../lib/chatClient";
 import { useChatClient } from "../(chat)/useChatClient";
 import { useChat } from "../../../contexts/chat";
+import { Entypo } from '../../../node_modules/@expo/vector-icons';
 
 const { width, height } = Dimensions.get('screen');
 
 export default function ViewPostPage() {
     const [post, setPost] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const { clientIsReady } = useChatClient();
     const params = useLocalSearchParams();
     const { id } = params;
@@ -21,77 +23,37 @@ export default function ViewPostPage() {
     const Stack = createStackNavigator();
 
     async function fetchPost() {
-      let { data } = await supabase.from('posts').select('*').eq('id', id).single();
-      setPost(data);
-      console.log("data.id: " + data.id);
-      console.log(`post: ${JSON.stringify(post)}`);
+      let { data: postData } = await supabase.from('posts').select('*').eq('id', id).single();
+      setPost(postData);
+      console.log(`postData: ${JSON.stringify(postData)}`);
     }
 
     useEffect(() => {
         fetchPost();
     }, [id]);
 
-     // Unique users yet to be added, defaulted to liNUS for now.
-     const ChatScreen = () => {
-      // const { channel, setChannel } = useChat();
-
-      if (!clientIsReady) {
-        return (
-          <View style={{flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator />
-          </View>
-        );
-      }
-
-      // Channel is being created but crashes the app
-      // const channelCreated = chatClient.channel('messaging', id, {
-      //   name: 'liNUS',
-      //   members: [post.user_id, user.id],
-      // });
-      // const wait = async () => await channelCreated.create();
-      // wait();
-      // channelCreated.watch();
-      // setChannel(channelCreated);
-      const instructions ="To be added. Please click on the chat bubble icon. A chat called 'liNUS' has been created upon pressing the chat button. Feel free to send messages there."
-      
-      return (
-        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
-          <Text>{instructions}</Text>
-        </View>
-      );
-
-      // return (
-      //   <Channel channel={channel}>
-      //     <MessageList />
-      //     <MessageInput />
-      //   </Channel>
-      // );
-    }
-
     const PostScreen = ( props ) => {
       const { navigation } = props;
       const handleChatPress = () => navigation.navigate('Chat');
       const handleCategoryPress = () => navigation.navigate('Category');
-      return (
-        <Post
-          postId={id}
-          username="liNUS"
-          title={post.title}
-          description={post.description}
-          price={post.price}
-          category={post.category}
-          condition={post.condition}
-          handleChatPress={handleChatPress}
-          handleCategoryPress={handleCategoryPress}
-        />
-      );
-    }
+      const handleRefresh = () => {
+        fetchPost();
+        setRefresh(false);
+      };
 
-    const CategoryScreen = ( props ) => {
       return (
-        <View style={{flex: 1, marginHorizontal: 10, justifyContent: 'center'}}>
-          <Text>Category screen to be added.</Text>
-        </View>
+        <ScrollView 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={handleRefresh} />
+        }>
+          <Post
+            postId={id}
+            post={post}
+            handleChatPress={handleChatPress}
+            handleCategoryPress={handleCategoryPress}
+          />
+        </ScrollView>
       );
     }
     
@@ -108,14 +70,6 @@ export default function ViewPostPage() {
               }}
               component={PostScreen}
             />
-            <Stack.Screen
-              name='Chat'
-              component={ChatScreen} 
-            />
-            <Stack.Screen
-              name='Category'
-              component={CategoryScreen}
-            />
           </Stack.Navigator>
         </View>
       </ChatProvider>
@@ -124,59 +78,98 @@ export default function ViewPostPage() {
 
 // Function creates the post for viewing.
 function Post( props ) {
-  const { postId, username, title, description, price, category, condition, handleChatPress, handleCategoryPress } = props;
+  const { postId, post } = props;
 
   return (
     <View style={styles.view}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Header username={username} />
-        <ImageCarousel id={postId} />
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.price}>${price}</Text>
-        <View style={{marginVertical: 7}}>
-          <Text style={styles.textHeader}>Condition</Text>
-          <Text style={styles.description}>{condition}</Text>
-          <Text style={styles.textHeader}>Description</Text>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-        <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
-          <Button
-            contentStyle={{marginHorizontal: 10}}
-            mode="outlined"
-            textColor="#000"
-            buttonColor='#fff'
-            compact={true}
-            onPress={handleCategoryPress}>{category}</Button>
-        </View>
-        <View style={{margin: 10}}>
-          <Button
-            mode="contained"
-            buttonColor="#003D7C"
-            textColor="#fff"
-            onPress={handleChatPress}>Chat</Button>
-        </View>
-      </ScrollView>
+      <Header username={post.username} avatar={post.avatar} id={postId} authorId={post.user_id} />
+      <ImageCarousel id={postId} />
+      <Text style={styles.title}>{post.title}</Text>
+      <Text style={styles.price}>${post.price}</Text>
+      <View style={{marginVertical: 7}}>
+        <Text style={styles.textHeader}>Condition</Text>
+        <Text style={styles.description}>{post.condition}</Text>
+        <Text style={styles.textHeader}>Description</Text>
+        <Text style={styles.description}>{post.description}</Text>
+      </View>
+      <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
+        <Button
+          contentStyle={{marginHorizontal: 10}}
+          mode="outlined"
+          textColor="#000"
+          buttonColor='#fff'
+          compact={true}>{post.category}</Button>
+      </View>
+      <View style={{margin: 10}}>
+        {(post.is_sold === false) && <Button
+          mode="contained"
+          buttonColor="#003D7C"
+          textColor="#fff">Available</Button>}
+        {(post.is_sold === true) && <Button
+          mode="contained"
+          buttonColor="#676E75"
+          textColor="#fff">Sold</Button>}
+      </View>
     </View>
   );
 }
 
 // Function creates the header for the post.
-function Header({username}) {
+function Header({username, avatar, id, authorId }) {
+  const [visible, setVisible] = useState(false);
+  const [isAuthor, setIsAuthor] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+  const handleToggleAvailability = async () => {
+    const { data: currAvail } = await supabase.from('posts').select('is_sold').eq('id', id).single();
+    console.log(`old availability: ${JSON.stringify(currAvail)}`);
+    const { error } = await supabase.from('posts').update({ 'is_sold': !(currAvail.is_sold) }).eq('id', id);
+    Alert.alert('Availability toggled!', 'Your changes have been saved.', [
+      {
+        text: 'OK',
+        onPress: () => {
+          // Handle the OK button press if needed
+        },
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    if (user.id === authorId) {
+      setIsAuthor(true);
+    }
+  }, [user.id, authorId]);
+
   return (
     <View style={styles.headerContainer}>
-      <Avatar />
-      <Text style={styles.username}>{username}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Avatar avatar={avatar} />
+        <Text style={styles.username}>{username}</Text>
+      </View>
+      {isAuthor&& <Menu
+        contentStyle={{backgroundColor: "white"}}
+        visible={visible}
+        onDismiss={closeMenu}
+        anchor={<Pressable onPress={openMenu}><Entypo name="dots-three-vertical" size={24} color="black" /></Pressable>}
+      >
+        <Menu.Item onPress={handleToggleAvailability} title="Toggle Availability" />
+        <Divider />
+        <Menu.Item onPress={() => router.push({ pathname: "/editPost", params: {id: id}})} title="Edit Post" />
+      </Menu>}
     </View>
   );
   }
 
   // Function creates the avatar for the header.
-  function Avatar() {
+  function Avatar({ avatar }) {
     return (
       <View style={styles.avatarContainer}>
         <Image 
         style={styles.avatar}
-        source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+        source={{ uri: avatar }} />
       </View>
     );
   }
@@ -285,8 +278,9 @@ function Header({username}) {
     },
     headerContainer: {
       margin: 5,
-      flexDirection: "row",
+      flexDirection: 'row',
       alignItems: "center",
+      justifyContent: 'space-between',
     },
     images: {
       width,

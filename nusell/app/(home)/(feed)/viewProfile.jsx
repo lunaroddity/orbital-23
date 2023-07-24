@@ -1,11 +1,10 @@
-import { View, Image, StyleSheet, FlatList,  Dimensions } from "react-native";
+import { View, Image, StyleSheet, FlatList,  Dimensions, TouchableHighlight } from "react-native";
 import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../../lib/supabase";
 import { HeaderBar } from '../../(auth)/_layout.jsx';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from "../../../contexts/auth";
 import { useEffect, useState } from "react";
-import { TouchableHighlight } from "react-native";
 
 const { width, height } = Dimensions.get('screen');
 const halfWidth = width / 2;
@@ -15,11 +14,12 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [avatar, setAvatar] = useState('');
+  const params = useLocalSearchParams();
+  const { id } = params;
   const router = useRouter();
-  const { user } = useAuth();
 
   async function fetchProfile() {
-    let { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    let { data } = await supabase.from('profiles').select('*').eq('id', id).single();
     console.log(`profileData: ${JSON.stringify(data)}`);
     setAvatar(data.avatar);
     setProfile(data);
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     let { data } = await supabase
         .from('posts')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', id)
         .order('inserted_at', { ascending: false });
     setPosts(data);
   }
@@ -49,8 +49,6 @@ export default function ProfilePage() {
     }
   }, [refresh]);
 
-  const oldAvatar = encodeURIComponent(avatar);
-
   return (
       <View style={styles.view}>
         <HeaderBar />
@@ -60,19 +58,6 @@ export default function ProfilePage() {
           username={profile.username}
           avatar={avatar}
         />          
-        <Button
-          style={styles.button}
-          mode="outlined"
-          outlineColor ="#003D7C"
-          rippleColor="#ccc" 
-          textColor='black'
-          onPress={() => {
-            router.push({pathname: "(profile)/editProfile",
-              params: { 
-                oldFirstName: profile.firstName,
-                oldLastName: profile.lastName,
-                oldUsername: profile.username,
-                oldAvatar: oldAvatar}})}}>Edit Profile</Button>
         <FlatList 
           data={posts}
           numColumns={2}
@@ -132,8 +117,8 @@ export function Avatar(props) {
     const router = useRouter();
       return (
         <View>
-          <TouchableHighlight 
-            onPress={() => router.push({ pathname: "(profile)/viewPost", params: { id: post.id }})
+          <TouchableHighlight
+            onPress={() => router.push({ pathname: "(feed)/viewPost", params: { id: post.id }})
           }>
             <View style={styles.postContainer}>
               <Image style={styles.postImage} source={{ uri: post.image_url }} />

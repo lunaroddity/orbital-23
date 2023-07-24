@@ -16,6 +16,13 @@ export default function ProfileLayout() {
         options={{
           headerShown: false
         }} />
+       <Stack.Screen 
+        name="editPost"
+        options={{
+          headerTitle: "Edit Post",
+          headerStyle: {backgroundColor: "#003D7C"},
+          headerTintColor: "#fff"
+        }} />
     </Stack>
   );
 }

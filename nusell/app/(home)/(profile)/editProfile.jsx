@@ -44,6 +44,7 @@ export default function EditProfile() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     if (firstName.length !== 0) {
       const { data, error } = await supabase.from('profiles').update({ firstName: firstName }).eq('id', user.id);
       if (error) {
@@ -69,6 +70,13 @@ export default function EditProfile() {
         setErrMsg(error.message);
         return;
       }
+
+      const { data: postData, error: postError } = await supabase.from('posts').update({ username: username }).eq('user_id', user.id);
+      if (postError) {
+        setLoading(false);
+        setErrMsg(postError.message);
+        return;
+      }
     }
 
     if (avatar.length !== 0) {
@@ -90,18 +98,30 @@ export default function EditProfile() {
       const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(avatarUploadData.path);
       console.log(publicUrl);
 
-      const { error: avatarUpdateError } = await supabase
+      const { error: profileAvatarUpdateError } = await supabase
         .from('profiles')
         .update({ avatar: publicUrl })
         .eq('id', user.id);
 
-      if (avatarUpdateError) {
+      if (profileAvatarUpdateError) {
           setLoading(false);
-          setErrMsg(avatarUpdateError.message);
+          setErrMsg(profileAvatarUpdateError.message);
           return;
       }
+
+      const { error: postAvatarUpdateError } = await supabase
+      .from('posts')
+      .update({ avatar: publicUrl })
+      .eq('user_id', user.id);
+
+      if (postAvatarUpdateError) {
+        setLoading(false);
+        setErrMsg(postAvatarUpdateError.message);
+        return;
+    }
     }
     
+    setLoading(false);
     console.log("firstName: " + firstName);
     console.log("lastName: " + lastName);
     console.log("username: " + username);
@@ -202,7 +222,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 5,
     marginTop: 10,
-    backgroundColor: "red"
   },
   button: {
     marginVertical: 5,
