@@ -31,16 +31,35 @@ export default function ProfilePage() {
         .select('*')
         .eq('user_id', user.id)
         .order('inserted_at', { ascending: false });
+    console.log('Posts data:', data);
     setPosts(data);
   }
 
   async function fetchLikes() {
-    let { data } = await supabase
+    //retrieve array of liked posts id
+    let { data: likearray } = await supabase
       .from('likes')
       .select('likedposts')
       .eq('user_id', user.id);
-    setPosts(data);
+
+    if (likearray.length > 0) {
+      console.log('Liked Post IDs:', likearray);
+
+      //retrieve array of posts (from array of liked posts id)
+      const { data: likepostdata } = await supabase
+        .from('posts')
+        .select('*')
+        .in('id', likearray[0].likedposts)
+        .order('inserted_at', { ascending: false });
+
+      console.log('Liked Posts Data:', likepostdata);
+
+      setPosts(likepostdata);
+    } else {
+      console.log('No liked posts found for user');
+    }
   }
+    
 
   // Initial data fetch on loading
   useEffect(() => {  
@@ -107,6 +126,14 @@ export default function ProfilePage() {
           ]}
         />
         {(value === 'posts') && <FlatList 
+          data={posts}
+          numColumns={2}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <PostItem post={item} />}
+          refreshing={refresh}
+          onRefresh={() => setRefresh(true)}
+        />}
+        {(value === 'likes') && <FlatList 
           data={posts}
           numColumns={2}
           keyExtractor={(item) => item.id.toString()}
