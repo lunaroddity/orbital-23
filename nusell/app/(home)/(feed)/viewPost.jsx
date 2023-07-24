@@ -157,7 +157,7 @@ function Post( props ) {
             onPress={handleChatPress}>Chat</Button>
           </View>
           <View style={{flexGrow: 1, margin: 5}}>
-          <LikeButton id={postId} />
+          <LikeButton postId={postId} />
           </View>
         </View>
       </ScrollView>
@@ -173,11 +173,11 @@ function LikeButton({ postId }) {
 
   const fetchData = async () => {
     try {
-      
+      console.log('postid:' + postId);
       const { data, error } = await supabase
         .from('likes')
         .select('likedposts')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single();
 
       if (error) {
@@ -208,7 +208,7 @@ function LikeButton({ postId }) {
       const { data, error } = await supabase
         .from('likes')
         .select('likedposts')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single();
 
       const existingLikedPosts = data !== null ? data.likedposts : [];
@@ -223,11 +223,17 @@ function LikeButton({ postId }) {
         // If not liked, add the postId to the array
         updatedLikedPosts = [...existingLikedPosts, postId];
       }
-      await supabase
+      const { updatedata, updateerror } = await supabase
           .from('likes')
           .update({ likedposts: updatedLikedPosts })
-          .eq('id', userId)
+          .eq('user_id', userId)
           .single();
+
+          if (updateerror) {
+            console.error('Error updating liked state:', error);
+            setLoading(false);
+            return;
+          }
       // Update the 'liked' state in the component
       setLiked(!liked);
     } catch (error) {
