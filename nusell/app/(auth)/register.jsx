@@ -62,26 +62,26 @@ export default function RegisterPage() {
 
         setLoading(true); // Renders a spinning loading icon.
         
-        const { data, error: authError } = await supabase.auth.signUp(
+        const { data: authData, error: authError } = await supabase.auth.signUp(
             { 
                 email: email, 
                 password: password,
                 options: { 
                     data: {
-                        first_name: firstName,
-                        last_name: lastName,
+                        firstName: firstName,
+                        lastName: lastName,
                         username: username,
                     }
                 }
             }
-        )      
+        );
 
-        console.log(data);
+        console.log(authData);
 
         if (authError) {
             setErrMsg(authError.message);
             return;
-        } 
+        }
 
         Alert.alert('Registration successful!', 'Check your email for confirmation', [
             {

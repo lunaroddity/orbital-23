@@ -1,41 +1,46 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, RefreshControl, Alert } from "react-native";
+import { useEffect, useState, useRef } from "react";
+import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, Pressable, RefreshControl, Alert } from "react-native";
 import { Text, Button, ActivityIndicator, Menu, Divider } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Pressable } from "react-native";
-import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
+import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-expo";
+import { chatClient } from "../../../lib/chatClient";
+import { useChatClient } from "../(chat)/useChatClient";
+import { useChat } from "../../../contexts/chat";
+import { Entypo } from '../../../node_modules/@expo/vector-icons';
 
 const { width, height } = Dimensions.get('screen');
 
 export default function ViewPostPage() {
     const [post, setPost] = useState([]);
     const [refresh, setRefresh] = useState(false);
+    const { clientIsReady } = useChatClient();
     const params = useLocalSearchParams();
     const { id } = params;
-    const Stack = createStackNavigator();
     const { user } = useAuth();
-    const userId = user.id;
+    const Stack = createStackNavigator();
 
     async function fetchPost() {
-        let { data } = await supabase.from('posts').select('*').eq('id', id).single();
-        setPost(data);
-        console.log("data.id: " + data.id);
+      let { data: postData } = await supabase.from('posts').select('*').eq('id', id).single();
+      setPost(postData);
+      console.log(`postData: ${JSON.stringify(postData)}`);
     }
 
     useEffect(() => {
         fetchPost();
     }, [id]);
 
-    const handleRefresh = () => {
-      fetchPost();
-      setRefresh(false);
-    };
-
     const PostScreen = ( props ) => {
       const { navigation } = props;
+      const handleChatPress = () => navigation.navigate('Chat');
+      const handleCategoryPress = () => navigation.navigate('Category');
+      const handleRefresh = () => {
+        fetchPost();
+        setRefresh(false);
+      };
+
       return (
         <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -45,25 +50,29 @@ export default function ViewPostPage() {
           <Post
             postId={id}
             post={post}
+            handleChatPress={handleChatPress}
+            handleCategoryPress={handleCategoryPress}
           />
         </ScrollView>
       );
     }
     
     return (
-      <View style={{flex: 1, justifyContent: 'center', backgroundColor: "#fff"}}>
-        <Stack.Navigator>
-          <Stack.Screen
-            name='Post'
-            options={{
-              headerStyle: { backgroundColor: '#003D7C'},
-              headerTintColor: '#fff',
-              headerTitle: "Post"
-            }}
-            component={PostScreen}
-          />
-        </Stack.Navigator>
-      </View>
+      <ChatProvider>
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name='Post'
+              options={{
+                headerStyle: { backgroundColor: '#003D7C'},
+                headerTintColor: '#fff',
+                headerTitle: "Post"
+              }}
+              component={PostScreen}
+            />
+          </Stack.Navigator>
+        </View>
+      </ChatProvider>
     );
 }
 
@@ -72,143 +81,41 @@ function Post( props ) {
   const { postId, post } = props;
 
   return (
-    <View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Header username={post.username} avatar={post.avatar} id={postId} authorId={post.user_id} />
-        <ImageCarousel id={postId} />
-        <Text style={styles.title}>{post.title}</Text>
-        <Text style={styles.price}>${post.price}</Text>
-        <View style={{marginVertical: 7}}>
-          <Text style={styles.textHeader}>Condition</Text>
-          <Text style={styles.description}>{post.condition}</Text>
-          <Text style={styles.textHeader}>Description</Text>
-          <Text style={styles.description}>{post.description}</Text>
-        </View>
-        <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
-          <Button
-            contentStyle={{marginHorizontal: 10}}
-            mode="outlined"
-            textColor="#000"
-            buttonColor='#fff'
-            compact={true}>{post.category}</Button>
-        </View>
-        <View style={{margin: 10, flexDirection: 'row', flex: 1}}>
-          <View style={{flexGrow: 40, margin: 2}}>
-            {(post.is_sold === false) && <Button
-              mode="contained"
-              buttonColor="#003D7C"
-              textColor="#fff">Available</Button>}
-            {(post.is_sold === true) && <Button
-              mode="contained"
-              buttonColor="#676E75"
-              textColor="#fff">Sold</Button>}
-          </View>
-          <View style={{flexGrow: 1, margin: 5}}>
-          <LikeButton postId={postId} />
-          </View>
-        </View>
-      </ScrollView>
+    <View style={styles.view}>
+      <Header username={post.username} avatar={post.avatar} id={postId} authorId={post.user_id} />
+      <ImageCarousel id={postId} />
+      <Text style={styles.title}>{post.title}</Text>
+      <Text style={styles.price}>${post.price}</Text>
+      <View style={{marginVertical: 7}}>
+        <Text style={styles.textHeader}>Condition</Text>
+        <Text style={styles.description}>{post.condition}</Text>
+        <Text style={styles.textHeader}>Description</Text>
+        <Text style={styles.description}>{post.description}</Text>
+      </View>
+      <View style={{marginLeft: 10, alignItems: 'flex-start'}}>
+        <Button
+          contentStyle={{marginHorizontal: 10}}
+          mode="outlined"
+          textColor="#000"
+          buttonColor='#fff'
+          compact={true}>{post.category}</Button>
+      </View>
+      <View style={{margin: 10}}>
+        {(post.is_sold === false) && <Button
+          mode="contained"
+          buttonColor="#003D7C"
+          textColor="#fff">Available</Button>}
+        {(post.is_sold === true) && <Button
+          mode="contained"
+          buttonColor="#676E75"
+          textColor="#fff">Sold</Button>}
+      </View>
     </View>
   );
 }
 
-function LikeButton({ postId }) {
-  const { user } = useAuth();
-  const userId = user.id;
-  const [liked, setLiked] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const fetchData = async () => {
-    try {
-      console.log('postid:' + postId);
-      const { data, error } = await supabase
-        .from('likes')
-        .select('likedposts')
-        .eq('user_id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching liked state:', error);
-        setLoading(false);
-        return;
-      }
-
-      // Check if the data exists and the 'likedposts' field is an array
-      if (data && Array.isArray(data.likedposts)) {
-        setLiked(data.likedposts.includes(postId));
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching liked state:', error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    fetchData();
-  }, [postId]);
-
-  const updateLikedState = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('likes')
-        .select('likedposts')
-        .eq('user_id', userId)
-        .single();
-
-      const existingLikedPosts = data !== null ? data.likedposts : [];
-
-      // Check if the postId is already in the 'likedposts' array
-      const isLiked = existingLikedPosts.includes(postId);
-
-      let updatedLikedPosts = [];
-      if (isLiked) {
-        updatedLikedPosts = existingLikedPosts.filter((value) => value !== postId);
-      } else {
-        // If not liked, add the postId to the array
-        updatedLikedPosts = [...existingLikedPosts, postId];
-      }
-      const { updatedata, updateerror } = await supabase
-          .from('likes')
-          .update({ likedposts: updatedLikedPosts })
-          .eq('user_id', userId)
-          .single();
-
-          if (updateerror) {
-            console.error('Error updating liked state:', error);
-            setLoading(false);
-            return;
-          }
-      // Update the 'liked' state in the component
-      setLiked(!liked);
-    } catch (error) {
-      console.error('Error updating liked state:', error);
-    }
-  };
-
-  const handleLikePress = async () => {
-    if (!loading) {
-      setLoading(true); // Prevent additional updates while fetching/updating state
-      await updateLikedState();
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Pressable onPress={handleLikePress}>
-      <MaterialCommunityIcons
-        name={liked ? 'heart' : 'heart-outline'}
-        size={32}
-        color={liked ? 'red' : 'black'}
-      />
-    </Pressable>
-  );
-}
-
 // Function creates the header for the post.
-function Header({username, avatar, id, authorId}) {
+function Header({username, avatar, id, authorId }) {
   const [visible, setVisible] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const { user } = useAuth();
@@ -257,12 +164,12 @@ function Header({username, avatar, id, authorId}) {
   }
 
   // Function creates the avatar for the header.
-  function Avatar() {
+  function Avatar({ avatar }) {
     return (
       <View style={styles.avatarContainer}>
         <Image 
         style={styles.avatar}
-        source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+        source={{ uri: avatar }} />
       </View>
     );
   }
@@ -355,6 +262,9 @@ function Header({username, avatar, id, authorId}) {
   }
 
   const styles = StyleSheet.create({
+    view: {
+      backgroundColor: "#fff"
+    },
     avatarContainer: {
       width: width * 0.1,
       height: width * 0.1,
@@ -368,7 +278,7 @@ function Header({username, avatar, id, authorId}) {
     },
     headerContainer: {
       margin: 5,
-      flexDirection: "row",
+      flexDirection: 'row',
       alignItems: "center",
       justifyContent: 'space-between',
     },
