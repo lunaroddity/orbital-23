@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.8.1"
+  }
+}

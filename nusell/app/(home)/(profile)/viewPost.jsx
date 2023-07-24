@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, RefreshControl, Alert, TouchableHighlight } from "react-native";
-import { Text, Button, Menu, Divider } from "react-native-paper";
+import { Text, Button, ActivityIndicator, Menu, Divider } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";

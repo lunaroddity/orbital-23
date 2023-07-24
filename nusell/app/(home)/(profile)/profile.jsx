@@ -1,5 +1,5 @@
 import { View, Image, StyleSheet, FlatList,  Dimensions, TouchableHighlight } from "react-native";
-import { Button, Text } from 'react-native-paper';
+import { Button, SegmentedButtons, Text } from 'react-native-paper';
 import { supabase } from "../../../lib/supabase";
 import { HeaderBar } from '../../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
@@ -14,6 +14,7 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [avatar, setAvatar] = useState('');
+  const [value, setValue] = useState('posts');
   const router = useRouter();
   const { user } = useAuth();
 
@@ -33,6 +34,14 @@ export default function ProfilePage() {
     setPosts(data);
   }
 
+  async function fetchLikes() {
+    let { data } = await supabase
+      .from('likes')
+      .select('likedposts')
+      .eq('user_id', user.id);
+    setPosts(data);
+  }
+
   // Initial data fetch on loading
   useEffect(() => {  
     fetchProfile();
@@ -44,9 +53,18 @@ export default function ProfilePage() {
     if (refresh) {
       fetchProfile();
       fetchPosts();
+      setValue('posts');
       setRefresh(false);
     }
   }, [refresh]);
+
+  useEffect(() => {
+    if (value === 'posts') {
+      fetchPosts();
+    } else if (value === 'likes') {
+      fetchLikes();
+    }
+  }, [value])
 
   const oldAvatar = encodeURIComponent(avatar);
 
@@ -72,14 +90,30 @@ export default function ProfilePage() {
                 oldLastName: profile.lastName,
                 oldUsername: profile.username,
                 oldAvatar: oldAvatar}})}}>Edit Profile</Button>
-        <FlatList 
+        <SegmentedButtons
+          style={styles.button}
+          value={value}
+          onValueChange={setValue}
+          theme={{colors: {secondaryContainer: "#003D7C", onSecondaryContainer:"#fff"}}}
+          buttons={[
+            {
+              value: 'posts',
+              label: 'Your Posts',
+            },
+            {
+              value: 'likes',
+              label: 'Your Likes',
+            }
+          ]}
+        />
+        {(value === 'posts') && <FlatList 
           data={posts}
           numColumns={2}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <PostItem post={item} />}
           refreshing={refresh}
           onRefresh={() => setRefresh(true)}
-        />
+        />}
       </View>
   )
 }
