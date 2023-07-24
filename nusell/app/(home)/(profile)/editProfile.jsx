@@ -1,7 +1,5 @@
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Button, Text, TextInput } from "react-native-paper";
-import { StreamChat } from "stream-chat";
-import { chatApiKey } from "../../../lib/chatClient";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";
 import * as ImagePicker from "expo-image-picker";
@@ -9,8 +7,6 @@ import { randomUUID } from "expo-crypto";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { Avatar } from "./profile";
-// import { Avatar } from "./profile";
-
 
 export default function EditProfile() {
   const params = useLocalSearchParams();
@@ -46,7 +42,7 @@ export default function EditProfile() {
   const handleSubmit = async () => {
     setLoading(true);
     if (firstName.length !== 0) {
-      const { data, error } = await supabase.from('profiles').update({ firstName: firstName }).eq('id', user.id);
+      const { error } = await supabase.from('profiles').update({ firstName: firstName }).eq('id', user.id);
       if (error) {
         setLoading(false);
         setErrMsg(error.message);
@@ -55,7 +51,7 @@ export default function EditProfile() {
     }
     
     if (lastName.length !== 0) {
-      const { data, error } = await supabase.from('profiles').update({ lastName: lastName }).eq('id', user.id);
+      const { error } = await supabase.from('profiles').update({ lastName: lastName }).eq('id', user.id);
       if (error) {
         setLoading(false);
         setErrMsg(error.message);
@@ -64,14 +60,14 @@ export default function EditProfile() {
     }
 
     if (username.length !== 0) {
-      const { data, error } = await supabase.from('profiles').update({ username: username }).eq('id', user.id);
+      const { error } = await supabase.from('profiles').update({ username: username }).eq('id', user.id);
       if (error) {
         setLoading(false);
         setErrMsg(error.message);
         return;
       }
 
-      const { data: postData, error: postError } = await supabase.from('posts').update({ username: username }).eq('user_id', user.id);
+      const { error: postError } = await supabase.from('posts').update({ username: username }).eq('user_id', user.id);
       if (postError) {
         setLoading(false);
         setErrMsg(postError.message);
@@ -110,9 +106,9 @@ export default function EditProfile() {
       }
 
       const { error: postAvatarUpdateError } = await supabase
-      .from('posts')
-      .update({ avatar: publicUrl })
-      .eq('user_id', user.id);
+        .from('posts')
+        .update({ avatar: publicUrl })
+        .eq('user_id', user.id);
 
       if (postAvatarUpdateError) {
         setLoading(false);
@@ -137,14 +133,7 @@ export default function EditProfile() {
     ]);
   };
   
-  const disconnectChat = async () => {
-    const chatClient = StreamChat.getInstance(chatApiKey);
-    await chatClient.disconnectUser();
-    return;
-  };
-  
   const handleLogout = async () => {
-    await disconnectChat();
     const { error } = await supabase.auth.signOut();
   };
 
@@ -157,7 +146,7 @@ export default function EditProfile() {
         <Button
           style={styles.button}
           mode="text"
-          textColor ="#003D7C"
+          textColor="#003D7C"
           onPress={handleChangeAvatar}>Change Avatar</Button>
         <Text style={styles.header}>First Name</Text>
         <TextInput

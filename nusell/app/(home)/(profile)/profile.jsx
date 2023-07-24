@@ -1,11 +1,10 @@
-import { View, Image, StyleSheet, FlatList,  Dimensions } from "react-native";
+import { View, Image, StyleSheet, FlatList,  Dimensions, TouchableHighlight } from "react-native";
 import { Button, Text } from 'react-native-paper';
 import { supabase } from "../../../lib/supabase";
 import { HeaderBar } from '../../(auth)/_layout.jsx';
 import { useRouter } from 'expo-router';
 import { useAuth } from "../../../contexts/auth";
 import { useEffect, useState } from "react";
-import { TouchableHighlight } from "react-native";
 
 const { width, height } = Dimensions.get('screen');
 const halfWidth = width / 2;
@@ -172,8 +171,8 @@ export function Avatar(props) {
       fontSize: 20
     },
     name: {
-        flexDirection: "row",
-        marginVertical: 5,
+      flexDirection: "row",
+      marginVertical: 5,
     },
     button: {
       marginHorizontal: 10,

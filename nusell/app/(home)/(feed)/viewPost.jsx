@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, RefreshControl, Alert } from "react-native";
+import { useEffect, useState, useRef } from "react";
+import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, RefreshControl, Alert, TouchableHighlight } from "react-native";
 import { Text, Button, ActivityIndicator, Menu, Divider } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
@@ -16,8 +16,6 @@ export default function ViewPostPage() {
     const params = useLocalSearchParams();
     const { id } = params;
     const Stack = createStackNavigator();
-    const { user } = useAuth();
-    const userId = user.id;
 
     async function fetchPost() {
         let { data } = await supabase.from('posts').select('*').eq('id', id).single();
@@ -58,7 +56,7 @@ export default function ViewPostPage() {
             options={{
               headerStyle: { backgroundColor: '#003D7C'},
               headerTintColor: '#fff',
-              headerTitle: "Post"
+              headerTitle: "Post",
             }}
             component={PostScreen}
           />
@@ -70,9 +68,10 @@ export default function ViewPostPage() {
 // Function creates the post for viewing.
 function Post( props ) {
   const { postId, post } = props;
+  console.log(`post: ${JSON.stringify(post)}`);
 
   return (
-    <View>
+    <View style={styles.view}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Header username={post.username} avatar={post.avatar} id={postId} authorId={post.user_id} />
         <ImageCarousel id={postId} />
@@ -118,36 +117,42 @@ function LikeButton({ postId }) {
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    try {
+  const fetchLikes = async () => {
       console.log('postid:' + postId);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('likes')
         .select('likedposts')
         .eq('user_id', userId)
         .single();
 
-      if (error) {
-        console.error('Error fetching liked state:', error);
+      // Check if the data exists
+      if (data === null) {
+        const { error } = await supabase
+          .from('likes')
+          .insert({ user_id: userId });
+
+        if (error) {
+          console.error('Error fetching liked state:', error);
+          setLoading(false);
+          return;
+        }
+
+        setLiked(false);
         setLoading(false);
         return;
       }
 
-      // Check if the data exists and the 'likedposts' field is an array
-      if (data && Array.isArray(data.likedposts)) {
+      // Check if  the 'likedposts' field is an array
+      if (Array.isArray(data.likedposts)) {
         setLiked(data.likedposts.includes(postId));
       }
 
       setLoading(false);
-    } catch (error) {
-      console.error('Error fetching liked state:', error);
-      setLoading(false);
-    }
   };
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    fetchLikes();
   }, [postId]);
 
   const updateLikedState = async () => {
@@ -170,13 +175,13 @@ function LikeButton({ postId }) {
         // If not liked, add the postId to the array
         updatedLikedPosts = [...existingLikedPosts, postId];
       }
-      const { updatedata, updateerror } = await supabase
+      const { error: updateError } = await supabase
           .from('likes')
           .update({ likedposts: updatedLikedPosts })
           .eq('user_id', userId)
           .single();
 
-          if (updateerror) {
+          if (updateError) {
             console.error('Error updating liked state:', error);
             setLoading(false);
             return;
@@ -201,7 +206,7 @@ function LikeButton({ postId }) {
       <MaterialCommunityIcons
         name={liked ? 'heart' : 'heart-outline'}
         size={32}
-        color={liked ? 'red' : 'black'}
+        color={liked ? '#BF3E3E' : 'black'}
       />
     </Pressable>
   );
@@ -238,10 +243,16 @@ function Header({username, avatar, id, authorId}) {
 
   return (
     <View style={styles.headerContainer}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Avatar avatar={avatar} />
-        <Text style={styles.username}>{username}</Text>
-      </View>
+      <TouchableHighlight
+        underlayColor={"#ccc"}
+        onPress={() => {
+          router.push({ pathname: "(feed)/viewProfile", params: { id: authorId } })
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Avatar avatar={avatar} />
+          <Text style={styles.username}>{username}</Text>
+        </View>
+      </TouchableHighlight>
       {isAuthor&& <Menu
         contentStyle={{backgroundColor: "white"}}
         visible={visible}
@@ -257,12 +268,12 @@ function Header({username, avatar, id, authorId}) {
   }
 
   // Function creates the avatar for the header.
-  function Avatar() {
+  function Avatar({ avatar }) {
     return (
       <View style={styles.avatarContainer}>
         <Image 
         style={styles.avatar}
-        source={{ uri: "https://pbs.twimg.com/media/DiRqvKmVMAMqWCQ.jpg" }} />
+        source={{ uri: avatar }} />
       </View>
     );
   }
@@ -355,6 +366,9 @@ function Header({username, avatar, id, authorId}) {
   }
 
   const styles = StyleSheet.create({
+    view: {
+      backgroundColor: "#fff"
+    },
     avatarContainer: {
       width: width * 0.1,
       height: width * 0.1,
