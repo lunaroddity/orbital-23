@@ -1,14 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, Pressable, RefreshControl, Alert } from "react-native";
+import { View, StyleSheet, Image, FlatList, Dimensions, Animated, ScrollView, Pressable, RefreshControl, Alert, TouchableHighlight } from "react-native";
 import { Text, Button, ActivityIndicator, Menu, Divider } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/auth";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ChatProvider, Channel, MessageList, MessageInput } from "stream-chat-expo";
-import { chatClient } from "../../../lib/chatClient";
-import { useChatClient } from "../(chat)/useChatClient";
-import { useChat } from "../../../contexts/chat";
 import { Entypo } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('screen');
@@ -16,7 +12,6 @@ const { width, height } = Dimensions.get('screen');
 export default function ViewPostPage() {
     const [post, setPost] = useState([]);
     const [refresh, setRefresh] = useState(false);
-    const { clientIsReady } = useChatClient();
     const params = useLocalSearchParams();
     const { id } = params;
     const { user } = useAuth();
@@ -58,7 +53,6 @@ export default function ViewPostPage() {
     }
     
     return (
-      <ChatProvider>
         <View style={{flex: 1, justifyContent: 'center'}}>
           <Stack.Navigator>
             <Stack.Screen
@@ -72,7 +66,6 @@ export default function ViewPostPage() {
             />
           </Stack.Navigator>
         </View>
-      </ChatProvider>
     );
 }
 
@@ -145,10 +138,16 @@ function Header({username, avatar, id, authorId }) {
 
   return (
     <View style={styles.headerContainer}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Avatar avatar={avatar} />
-        <Text style={styles.username}>{username}</Text>
-      </View>
+      <TouchableHighlight
+        underlayColor={"#ccc"}
+        onPress={() => {
+          router.push({ pathname: "(feed)/viewProfile", params: { id: authorId } })
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Avatar avatar={avatar} />
+          <Text style={styles.username}>{username}</Text>
+        </View>
+      </TouchableHighlight>
       {isAuthor&& <Menu
         contentStyle={{backgroundColor: "white"}}
         visible={visible}

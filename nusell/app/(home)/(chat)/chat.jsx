@@ -34,15 +34,18 @@ export default function ChatPage() {
     const { setChannel } = useChat();
 
     return (
-      <ChannelList
-        onSelect={(channel) => {
-          const { navigation } = props;
-          setChannel(channel);
-          navigation.navigate('ChannelScreen');
-        }}
-          filters={filters}
-          sort={sort} 
-      />
+      <View>
+        <ChannelList
+          onSelect={(channel) => {
+            const { navigation } = props;
+            setChannel(channel);
+            navigation.navigate('ChannelScreen');
+          }}
+            filters={filters}
+            sort={sort} 
+        />
+      </View>
+        
     );
   }
 
@@ -66,7 +69,8 @@ export default function ChatPage() {
             options={{ 
               title: "Chat",
               headerStyle: {backgroundColor: "#003D7C"},
-              headerTintColor: "#fff"}}
+              headerTintColor: "#fff",
+            }}
             component={ChannelListScreen} 
           />
           <Stack.Screen
